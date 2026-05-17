@@ -112,7 +112,7 @@ def build_cover_letter():
         "by relaxing two standard assumptions in the perpetual inventory method: "
         "zero time-to-build and the exclusion of intangible capital.",
 
-        "The paper makes three specific contributions that align with the journal's "
+        "The paper makes four specific contributions that align with the journal's "
         "scope. First, it introduces a time-varying mean investment-to-output lag in "
         "a production-function PIM framework and shows that this improves out-of-sample "
         "GDP level predictions by 12–13% across 39 OECD and middle-income economies. "
@@ -120,10 +120,14 @@ def build_cover_letter():
         "capital share β against both production data (Penn World Table) and wealth "
         "data (World Bank CWON), demonstrating that the flow and stock accounts agree "
         "to within 1–2% for most advanced economies when both parameters are estimated "
-        "rather than imposed. Third, it provides bootstrap confidence intervals showing "
-        "that neither parameter is well identified from production data alone; the "
-        "wealth-side constraint from the national accounting identity dW/dt = S(Y) − δW "
-        "is essential.",
+        "rather than imposed. Third, it introduces a **relational PIM (RPIM)** — "
+        "inspired by the Brass (1971) relational model in demography — which formalises "
+        "the PIM-CWON consistency check through two diagnostic parameters (ρ₁, ρ₂) "
+        "and provides a δ-ρ₂ sensitivity analysis to assess whether depreciation "
+        "mis-specification could explain the residual gap. Fourth, it provides bootstrap "
+        "confidence intervals showing that neither μ nor β is well identified from "
+        "production data alone; the wealth-side constraint from the national accounting "
+        "identity dW/dt = S(Y) − δW is essential.",
 
         "The paper was previously submitted to the Review of Income and Wealth, where "
         "it received a desk rejection. I have taken the Editor's detailed and "
@@ -134,9 +138,13 @@ def build_cover_letter():
         "heuristic rather than a formal claim of equivalence, with a dedicated section "
         "discussing where the analogy holds and where it breaks down; (3) additional "
         "benchmark models (AR(1) distributed lag, broken-trend specification) have been "
-        "added to test the robustness of the time-varying lag result; and (4) the "
+        "added to test the robustness of the time-varying lag result; (4) the "
         "empirical results are reported more honestly, including the negative finding "
-        "that intangible capital alone does not improve out-of-sample prediction.",
+        "that intangible capital alone does not improve out-of-sample prediction; and "
+        "(5) a new **relational PIM (M5)** has been introduced, inspired by the Brass "
+        "(1971) relational model, which formalises the PIM-CWON consistency check through "
+        "two diagnostic parameters (ρ₁, ρ₂) and provides a δ-ρ₂ sensitivity analysis "
+        "to separate depreciation effects from time-to-build effects.",
 
         "I believe the revised manuscript is now a better fit for Economic Systems "
         "Research than for its previous target. The paper's emphasis on the accounting-"

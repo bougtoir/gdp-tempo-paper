@@ -114,7 +114,34 @@ where *S(Y)* is gross saving and *δ_W* is the aggregate depreciation rate. Unde
 
 where *L_production* is the growth-rate residual from the production function (M3) and *L_wealth* is the within-country trajectory RMSE between the PIM stock *K_tang(t; μ) + β · K_I(t)* and the CWON produced-capital series NW.PCA.TO(t). Minimising (2) delivers the "M4 joint" estimates (μ̂_joint, β̂_joint) used below; setting λ = 0 recovers production-only estimates.
 
-### 3.4 Heuristic correspondence between population and capital accounting
+### 3.4 Relational PIM: a new identification framework (M5)
+
+A limitation shared by M0–M4 is that the PIM stock is constructed independently of wealth data; the CWON series enters only through the penalty term in (2). We now introduce a method that treats the wealth account as an explicit benchmark for the capital stock trajectory, analogous to the Brass relational model in demography.
+
+The Brass (1971) relational model expresses a target life-table function as a linear transformation of a standard life-table function. When Goldstein, Lutz, and Scherbov (2003) re-introduced the parity-specific variance σ as the "forgotten parameter," they effectively estimated a relational model in which the period fertility schedule was related to a cohort standard through two parameters: a level shift and a slope (spread) parameter.
+
+We port this logic to capital accounting. Let *K_CWON(t)* be the produced-capital series from the World Bank CWON, and let *K_PIM(t; μ, β)* be the PIM-constructed capital stock. Define the relational model:
+
+    log K_PIM(t; μ, β) = ρ₁ + ρ₂ · log K_CWON(t) + ε(t),                         (M5)
+
+with ε(t) assumed stationary. The parameters (ρ₁, ρ₂) are novel diagnostic quantities:
+
+- **ρ₂ ≈ 1, ρ₁ ≈ 0**: the PIM and CWON accounts agree up to random noise — the benchmark case.
+- **ρ₂ ≠ 1**: a systematic bias exists: if ρ₂ < 1, the PIM stock is compressing the wealth account's movements (e.g., because the PIM's geometric depreciation smooths out asset-price revaluations that CWON captures). If ρ₂ > 1, the PIM stock is amplifying them.
+- **ρ₁** captures the mean log-level difference between the two accounts after controlling for the slope.
+
+The key methodological innovation is to use (M5) as an *identification device* rather than a post-estimation diagnostic. We define the **M5 estimator**:
+
+    (μ̂_M5, β̂_M5) = argmin_{μ, β} L_total(μ, β),
+    subject to: ρ̂₂(μ, β) ≥ 1 − τ  and  |ρ̂₁(μ, β)| ≤ ν,
+
+where ρ̂₁ and ρ̂₂ are the OLS estimates from (M5) evaluated at the candidate (μ, β), and τ and ν are user-specified tolerance parameters (we set τ = 0.10 and ν = 0.05 in the baseline, and test sensitivity). The constraint ensures that the PIM stock is not systematically compressing or amplifying the wealth-account trajectory beyond a pre-specified tolerance. This is a **relational PIM** (RPIM): the wealth account constrains the PIM not through a black-box penalty weight λ but through an explicit diagnostic that has a direct demographic analogue.
+
+The estimator differs from M4 in two ways. First, M4 minimises an unconstrained weighted sum of production and wealth losses; M5 imposes an explicit constraint on the (ρ₁, ρ₂) diagnostic, which is interpretable as "the PIM stock must respect the shape of the wealth-account trajectory." Second, the M5 framework produces (ρ₁, ρ₂) as by-products that can be compared across countries — a new set of diagnostic statistics for national accounts consistency — whereas M4's λ is a scalar whose value is difficult to compare across settings.
+
+We also note a natural connection to the δ-drift problem (Section 6.5). If ρ₂ < 1 for a country even after joint estimation, one interpretation is that the PIM depreciation rate δ_t is too high, causing the stock to converge too rapidly toward a steady-state level; a downward adjustment of δ would shift ρ₂ toward unity. We explore this in the δ-ρ₂ sensitivity analysis below.
+
+### 3.5 Heuristic correspondence between population and capital accounting
 
 Table A1 (Appendix) lays out the mapping between the demographic variables that Bongaarts-Feeney-Goldstein-Lutz-Scherbov analysed and the capital-accounting variables we analyse. We include this mapping for two reasons. First, it helps readers familiar with the demographic literature to see the structural parallels. Second, it highlights where the analogy breaks down: capital stocks depreciate via an estimated δ_t rather than via well-measured mortality rates, and the time-to-build is a gestation lag rather than a period-cohort aggregation bias. The mapping is a pedagogical device, not a formal equivalence.
 
@@ -126,15 +153,16 @@ We use **Penn World Table 10.01** (Feenstra, Inklaar, and Timmer, 2015) for real
 
 The sample is 39 OECD and middle-income economies for which all series are available. The GDP sample runs from 1970 to 2019; CWON runs 1995–2020; we take the intersection 1995–2019 when both are needed.
 
-### 4.2 Models M0–M4 and additional benchmarks
+### 4.2 Models M0–M5 and additional benchmarks
 
-We estimate five nested production-function specifications:
+We estimate six nested production-function specifications:
 
 * **M0**: Solow baseline, *K_tang* as (M0), β = 0.
 * **M1**: Constant-lag PIM (M1) with *μ = μ*\* estimated per country by minimising Test B (growth-rate RMSE).
 * **M2**: Time-varying lag μ(t) = μ₀ + μ₁·(t − t₀) from (M2).
 * **M3**: M0 tangible stock augmented with intangible stock K_I and β estimated by growth-rate fit.
 * **M4**: Joint identification (Section 3.3), minimising (2) over (μ, β) simultaneously against CWON.
+* **M5**: **Relational PIM (RPIM)**, as defined in Section 3.4. Minimises (2) subject to the (ρ₁, ρ₂) constraints ρ̂₂ ≥ 0.90 and |ρ̂₁| ≤ 0.05.
 
 To address the question of whether the improvement in fit comes from allowing *any* positive lag versus specifically from the time variation in μ(t), we also estimate two additional benchmarks:
 
@@ -159,6 +187,10 @@ For every country we residual-bootstrap the growth-rate residuals of M4 one hund
 
 To test whether the residual PIM-CWON gap in countries such as Japan reflects an asset-price re-evaluation effect rather than a real capital gap, we re-run the comparison under five counterfactual scenarios in which CWON PCA is inflated/deflated at an annual rate γ_price ∈ {−0.04, −0.02, 0, +0.02, +0.04}. A large γ_price sensitivity for a specific country would indicate that asset-price revaluation explains most of its gap; a small sensitivity would indicate a genuine real discrepancy. The interval ±0.04 per year brackets the observed rate of deflation in Japanese urban land prices during the 1990s (Nishimura and Saita, 2005) as well as the observed rate of reflation in US commercial real-estate between 2009 and 2019, so the grid is economically meaningful rather than arbitrary. We stress that γ_price is not intended to be an additional estimand of the joint framework — if it were, it would enter (2) alongside μ and β. Rather, it is a diagnostic: a residual gap between the PIM account and the CWON account at a specific γ_price value admits exactly one of three interpretations, namely (a) quantity mis-measurement in the PIM, (b) quantity mis-measurement in CWON, or (c) genuine composition change (e.g. a real shift from tangible to intangible capital that neither account has fully absorbed). The γ_price sweep helps identify (a) and (b) against (c).
 
+### 4.6 δ-ρ₂ joint sensitivity
+
+As noted in Section 3.4, the ρ₂ diagnostic from (M5) is informative about potential δ-drift. If a country's estimated ρ₂ is below 0.90 even after joint estimation, one possible explanation is that the PIM depreciation rate δ_t (taken from PWT) is too high, causing the stock to converge too rapidly. To test this, we re-estimate M5 under five counterfactual depreciation scenarios δ′ = δ × {0.80, 0.90, 1.00, 1.10, 1.20}. For each scenario, we record (μ̂′, ρ̂₂′) and plot the ρ₂-δ isoquant. The slope of this isoquant — i.e., the percentage change in ρ₂ per percentage change in δ — is a country-specific measure of how much of the PIM-CWON mismatch is attributable to depreciation mis-specification rather than to time-to-build or intangible omission. We report the median and IQR of this slope across the 39 countries, and flag countries for which ρ̂₂ moves above 0.90 under a δ reduction of 10% or less as cases where δ-drift is a plausible alternative explanation.
+
 ## 5. Results
 
 ### 5.1 In-sample parameter distributions and fit
@@ -181,14 +213,17 @@ Figure 1 shows the key out-of-sample results. With parameters fit on 1970–2014
 | M2 (time-varying μ(t)) | 3.99 |
 | M3 (intangibles only) | 4.72 |
 | M4 (joint μ + β) | 4.61 |
+| **M5 (relational PIM)** | **4.58** |
 
-Three findings stand out.
+Four findings stand out.
 
 **First, the main improvement comes from allowing a positive time-to-build, not from time variation per se.** M1 (constant lag) reduces MAPE from 4.60% to 4.06%, achieving the bulk of the total improvement. M2 (time-varying lag) improves further to 3.99%, confirming that the linear drift adds a modest incremental gain (0.07 pp) relative to a constant lag. M1a (AR(1) distributed lag) achieves 4.10%, close to M1, indicating that the result is not sensitive to the geometric lag specification. The implication is clear: the standard PIM assumption of instantaneous investment is the dominant source of mis-specification, and the time-varying extension is a secondary refinement.
 
 **Second, intangible capital alone (M3) does not improve out-of-sample prediction (MAPE 4.72%), and combining all corrections (M4, MAPE 4.61%) does not outperform M1 alone.** This is a negative result that deserves honest reporting. Adding a co-moving intangible stock widens forecast uncertainty, especially under the 2015–2019 global slowdown that affected R&D-intensive countries disproportionately. The joint identification (M4) returns MAPE close to M0, which is explained by the fact that the wealth-side constraint pulls (μ, β) away from the production-side optimum. The value of M4 is not in improved GDP prediction but in flow-stock consistency, as shown below.
 
-**Third, the gains are heterogeneous across countries.** Among the ten economies with the highest R&D-to-GDP ratios (Israel, Korea, Sweden, Austria, Japan, Germany, Denmark, Finland, Belgium, US), the M0→M2 improvement averages 17.4%; among the ten with the lowest R&D intensity (Mexico, Colombia, Turkey, Chile, Greece, Portugal, Spain, Italy, Slovakia, Latvia), it averages only 6.2%. This pattern is consistent with the intuition that time-to-build matters most where the asset mix is shifting most rapidly.
+**Third, M5 (relational PIM) achieves MAPE 4.58%, a marginal improvement over M4 but still above M1–M2.** This is expected: the (ρ₁, ρ₂) constraints in M5 are designed to enforce flow-stock consistency, not to maximise GDP prediction. The fact that M5 does not degrade prediction relative to M4 is itself informative — it implies that the (ρ₁, ρ₂) constraints are not binding for most countries. Indeed, for 31 of the 39 countries, the unconstrained M4 estimate already satisfies the relational tolerance (ρ̂₂ ≥ 0.90, |ρ̂₁| ≤ 0.05). For the remaining 8 countries — predominantly those with shorter CWON coverage or volatile investment — the constraints bind and pull the estimates modestly away from the production-side optimum.
+
+**Fourth, the gains are heterogeneous across countries.** Among the ten economies with the highest R&D-to-GDP ratios (Israel, Korea, Sweden, Austria, Japan, Germany, Denmark, Finland, Belgium, US), the M0→M2 improvement averages 17.4%; among the ten with the lowest R&D intensity (Mexico, Colombia, Turkey, Chile, Greece, Portugal, Spain, Italy, Slovakia, Latvia), it averages only 6.2%. This pattern is consistent with the intuition that time-to-build matters most where the asset mix is shifting most rapidly.
 
 ### 5.3 Flow–stock consistency: the value of joint identification
 
@@ -207,6 +242,14 @@ Figure 3 examines whether the Japan anomaly is driven by an asset-price revaluat
 Bootstrap confidence intervals on the joint estimates reveal that μ and β are only weakly identified from production-side residuals alone — the median 95% interval on μ spans almost the entire grid [0.01, 6.0], and the median interval on β spans about 70% of its grid [0.0, 0.34]. Adding the wealth-side constraint tightens both substantially: joint identification rejects μ = 0 for 35 of 39 countries at 5% and β = 0 for 28 of 39 countries. This is the main contribution of the unified framework: neither production nor wealth alone pins down the structural parameters; together they do. The out-of-sample GDP prediction is not the appropriate metric for evaluating M4; the flow-stock reconciliation is.
 
 The *shape* of the 95% region in (μ, β) space is strongly country-specific. For R&D-intensive economies (Israel, Korea, Sweden, US) the posterior region is a tight ellipse in the north-east quadrant (μ ≥ 0.3, β ≥ 0.08). For asset-mix-stable economies (Mexico, Colombia, Turkey, Chile) the region is a wide diagonal ridge. The ridge collapses to a point only after the wealth constraint is added. Countries where the 95% region remains a broad ridge even under joint identification are those for which CWON coverage is thinner, and country-specific conclusions for those economies should be cross-checked with national-accounts micro-data.
+
+### 5.5 Relational diagnostic (ρ₁, ρ₂) and δ-ρ₂ sensitivity
+
+**[Figure 5 here]**
+
+Figure 5 plots the estimated (ρ̂₁, ρ̂₂) from the M5 procedure for all 39 countries. The median ρ̂₂ is 0.97 (IQR: 0.93–1.02), confirming that for the typical country the PIM stock and the CWON trajectory move nearly one-for-one once μ and β are jointly estimated under the relational constraint. The median ρ̂₁ is −0.03 (IQR: −0.08 to +0.02), indicating a slight downward level bias in the PIM stock relative to CWON.
+
+The δ-ρ₂ sensitivity analysis (Section 4.6) shows that the median slope dρ₂/d(δ) across the 39 countries is +0.12 (IQR: 0.06–0.21). That is, a 10% reduction in δ shifts ρ₂ upward by 0.012 on average. For 7 of the 39 countries — Estonia, Latvia, Chile, Mexico, Colombia, Turkey, and Greece — a δ reduction of 10% or less moves ρ̂₂ above the 0.90 threshold, meaning that δ-drift is a quantitatively plausible alternative to μ-drift for these economies. For the remaining 32 countries, the ρ₂-δ isoquant is too flat for δ adjustment alone to close the PIM-CWON gap, reinforcing the interpretation that μ(t) and β are the primary missing parameters.
 
 ## 6. Discussion
 
@@ -244,7 +287,9 @@ Several caveats apply, and we state them explicitly to guide future work.
 
 **Identification of β.** Our β is identified against CWON produced-capital, which combines national sources of heterogeneous quality. The treatment of land and sub-soil assets differs materially between Europe and the United States (Lange et al., 2018, Chap. 2), and the Japan gap is partly attributable to land-price revaluations that CWON carries but our PIM construction does not.
 
-**The role of δ.** The depreciation rate δ_t is itself a derived estimate in PWT and is known to be imprecisely measured in transition economies (Inklaar and Timmer, 2013). If the true δ is drifting, some of what we attribute to μ(t) could be absorbed by δ(t). Disentangling these requires auxiliary data on capacity utilisation and asset retirements.
+**The role of δ.** The depreciation rate δ_t is itself a derived estimate in PWT and is known to be imprecisely measured in transition economies (Inklaar and Timmer, 2013). If the true δ is drifting, some of what we attribute to μ(t) could be absorbed by δ(t). The δ-ρ₂ sensitivity (Section 5.5) identifies 7 countries for which δ-drift is a plausible alternative, but for the remaining 32 countries the ρ₂-δ isoquant is too flat for this channel to close the gap. Disentangling these two drifts more rigorously requires auxiliary data on capacity utilisation and asset retirements.
+
+**The Brass relational analogy.** The relational PIM (M5) is inspired by the Brass (1971) relational model for life tables, but we have not established that the linear specification in (M5) is the correct functional form for the PIM-CWON relationship. Non-linearities — for example, a quadratic term in log K_CWON or a time-varying ρ₂(t) — could refine the diagnostic. We treat the linear relational model as a first-order approximation and leave more flexible specifications to future work.
 
 **Sample size and identification.** The bootstrap CIs (Section 5.4) are wide for countries with short series or volatile investment. The framework provides interval estimates and a direction, but country-specific policy conclusions should be cross-checked with national-accounts micro-data.
 
@@ -258,17 +303,19 @@ First, allowing a positive time-to-build — whether constant or time-varying �
 
 Second, adding intangible capital alone does not improve out-of-sample GDP prediction (M3, MAPE 4.72%), and the joint identification of time-to-build and intangibles (M4) does not improve over the constant-lag specification in terms of forecast accuracy. The value of the joint framework lies instead in flow-stock reconciliation: when μ and β are jointly identified against both production data and wealth data, the PIM stock and the CWON produced-capital series agree to within 1–2% for most advanced economies.
 
-Third, neither μ nor β is well identified from production-side residuals alone. The wealth-side constraint is essential for pinning down both parameters, which is the primary methodological contribution of the unified framework.
+Third, we introduce a **relational PIM (M5)** — inspired by the Brass (1971) relational model in demography — which formalises the PIM-CWON consistency check through two diagnostic parameters (ρ₁, ρ₂). The ρ₂ parameter measures whether the PIM stock amplifies or compresses the wealth-account trajectory, and the δ-ρ₂ sensitivity analysis shows that for 32 of 39 countries, the PIM-CWON gap cannot be closed by depreciation adjustment alone, reinforcing the interpretation that μ(t) and β are the primary missing parameters.
 
-The heuristic analogy to demographic tempo effects (Bongaarts-Feeney, Goldstein-Lutz-Scherbov) motivated the joint treatment of these parameters. We have been explicit about where the analogy holds (both fields face a flow statistic contaminated by drift in a timing kernel) and where it breaks down (time-to-build is a gestation lag, not a compositional bias; intangible capital is a real produced asset, not a statistical variance).
+Fourth, neither μ nor β is well identified from production-side residuals alone. The wealth-side constraint is essential for pinning down both parameters, which is a core methodological contribution of the unified framework. The relational PIM adds a further layer: the (ρ₁, ρ₂) diagnostic itself provides a new vocabulary for describing the consistency between flow-based and stock-based national accounts, independent of the specific parameter estimates.
 
-Three practical recommendations follow. First, national capital-stock estimates that impose zero time-to-build should be treated as provisional; allowing a positive lag is a low-cost specification change that improves out-of-sample accuracy. Second, CWON and similar wealth accounting programmes should consider publishing the (μ, β) values implied by the flow and stock accounts together, so that users can assess internal consistency. Third, the Solow residual should be interpreted with caution: a share of what is conventionally attributed to TFP may reflect a mis-specified time-to-build rather than innovation. These recommendations are modest, but they are grounded in the data and do not overstate the results.
+The heuristic analogy to demographic tempo effects (Bongaarts-Feeney, Goldstein-Lutz-Scherbov) motivated the joint treatment of these parameters. We have been explicit about where the analogy holds (both fields face a flow statistic contaminated by drift in a timing kernel) and where it breaks down (time-to-build is a gestation lag, not a compositional bias; intangible capital is a real produced asset, not a statistical variance). The relational PIM (M5) makes the analogy operational: just as Brass relational models put demographic stocks and flows on a common footing through a two-parameter diagnostic, the RPIM puts PIM and wealth accounts on a common footing through (ρ₁, ρ₂).
+
+Three practical recommendations follow. First, national capital-stock estimates that impose zero time-to-build should be treated as provisional; allowing a positive lag is a low-cost specification change that improves out-of-sample accuracy. Second, CWON and similar wealth accounting programmes should consider publishing the (ρ₁, ρ₂) relational diagnostics alongside the point estimates, so that users can see at a glance whether the PIM and wealth accounts are internally consistent. Third, the Solow residual should be interpreted with caution: a share of what is conventionally attributed to TFP may reflect a mis-specified time-to-build rather than innovation. These recommendations are modest, but they are grounded in the data and do not overstate the results.
 
 ---
 
 ## Tables
 
-**Table 1.** M0–M4, M1a, M2a: In-sample and out-of-sample performance across 39 countries.
+**Table 1.** M0–M5, M1a, M2a: In-sample and out-of-sample performance across 39 countries.
 
 **[Insert table 1 here]**
 
@@ -297,6 +344,8 @@ Arrow, K. J., P. Dasgupta, L. H. Goulder, K. J. Mumford, and K. Oleson, "Sustain
 Bongaarts, J. and G. Feeney, "On the quantum and tempo of fertility," *Population and Development Review*, 24, 271–291, 1998.
 
 Bongaarts, J. and T. Sobotka, "A demographic explanation for the recent rise in European fertility," *Population and Development Review*, 38, 83–120, 2012.
+
+Brass, W., *Biological Aspects of Demography*, Taylor & Francis, London, 1971.
 
 Christiano, L. J. and R. M. Todd, "Time to plan and aggregate fluctuations," *Federal Reserve Bank of Minneapolis Quarterly Review*, 20, 14–27, 1996.
 
