@@ -634,6 +634,390 @@ def run_gamma_price(countries: list[Country], fair: pd.DataFrame,
     return pd.DataFrame(rows)
 
 
+# ----- Analysis 6: Relational PIM (M5 / RPIM) -----
+def fit_relational_pim(K_pim: np.ndarray, K_cwon: np.ndarray,
+                      cwon_years: np.ndarray,
+                      pim_years: np.ndarray) -> tuple[float, float, float, int]:
+    """Brass relational model for capital accounting.
+
+    Estimates  log K_PIM(t) = rho1 + rho2 * log K_CWON(t) + eps(t)
+    on the overlapping years where both series are observed and positive.
+
+    Returns (rho1, rho2, R2, n_obs).
+    """
+    idx_map = {int(y): i for i, y in enumerate(pim_years)}
+    log_pim = []
+    log_cwon = []
+    for i, y in enumerate(cwon_years):
+        j = idx_map.get(int(y))
+        if j is None:
+            continue
+        kp = K_pim[j]
+        kc = K_cwon[i]
+        if np.isfinite(kp) and np.isfinite(kc) and kp > 0 and kc > 0:
+            log_pim.append(np.log(kp))
+            log_cwon.append(np.log(kc))
+    if len(log_pim) < 6:
+        return np.nan, np.nan, np.nan, 0
+    lp = np.array(log_pim)
+    lc = np.array(log_cwon)
+    X = np.column_stack([np.ones_like(lc), lc])
+    params, residuals, _, _ = np.linalg.lstsq(X, lp, rcond=None)
+    rho1, rho2 = float(params[0]), float(params[1])
+    ss_res = float(np.sum((lp - X @ params) ** 2))
+    ss_tot = float(np.sum((lp - lp.mean()) ** 2))
+    r2 = 1.0 - ss_res / ss_tot if ss_tot > 0 else np.nan
+    return rho1, rho2, r2, len(lp)
+
+
+def run_relational_pim(countries: list[Country],
+                       fair: pd.DataFrame) -> pd.DataFrame:
+    """For each country, fit the Brass relational model between PIM K and
+    CWON produced capital under each model specification (M0, M1, M2, M4).
+    Reports (rho1, rho2, R2) per model."""
+    mu1_by = dict(zip(fair["country"], fair["mu_M1"]))
+    mu20_by = dict(zip(fair["country"], fair["mu_M2_0"]))
+    mu21_by = dict(zip(fair["country"], fair["mu_M2_1"]))
+    mu4_by = dict(zip(fair["country"], fair["mu_M4"]))
+    beta4_by = dict(zip(fair["country"], fair["beta_M4"]))
+    rows = []
+    for c in countries:
+        K_intan = build_intan_stock(c.Y, c.rnd_share)
+        if K_intan is None:
+            continue
+        K_M0 = pim_instant(c.I, c.delta, c.K0)
+        mu1 = float(mu1_by.get(c.country, np.nan))
+        K_M1 = pim_lagged(c.I, c.delta, c.K0, mu1) if np.isfinite(mu1) else None
+        mu20 = float(mu20_by.get(c.country, np.nan))
+        mu21 = float(mu21_by.get(c.country, np.nan))
+        K_M2 = pim_lagged_tempo(c.I, c.delta, c.K0, mu20, mu21,
+                                c.years) if np.isfinite(mu20) else None
+        mu4 = float(mu4_by.get(c.country, np.nan))
+        beta4 = float(beta4_by.get(c.country, np.nan))
+        K_M4_tang = pim_lagged(c.I, c.delta, c.K0, mu4) if np.isfinite(mu4) else None
+        if K_M4_tang is not None and np.isfinite(beta4) and beta4 > 0:
+            K_M4_total = K_M4_tang + beta4 * K_intan
+        elif K_M4_tang is not None:
+            K_M4_total = K_M4_tang
+        else:
+            K_M4_total = None
+
+        rec = {"country": c.country, "iso3": c.iso}
+        for label, K in [("M0", K_M0), ("M1", K_M1), ("M2", K_M2),
+                         ("M4", K_M4_total)]:
+            if K is None:
+                rec[f"{label}_rho1"] = np.nan
+                rec[f"{label}_rho2"] = np.nan
+                rec[f"{label}_R2"] = np.nan
+                rec[f"{label}_n"] = 0
+            else:
+                r1, r2, rsq, n = fit_relational_pim(K, c.pca,
+                                                     c.cwon_years, c.years)
+                rec[f"{label}_rho1"] = r1
+                rec[f"{label}_rho2"] = r2
+                rec[f"{label}_R2"] = rsq
+                rec[f"{label}_n"] = n
+        rows.append(rec)
+        print(f"  [rpim] {c.country:22s}  "
+              f"M0: rho2={rec['M0_rho2']:.3f}  "
+              f"M4: rho2={rec['M4_rho2']:.3f}  "
+              f"R2={rec['M4_R2']:.3f}",
+              flush=True)
+    return pd.DataFrame(rows)
+
+
+# ----- Analysis 7: delta-mu joint sensitivity -----
+def run_delta_sensitivity(countries: list[Country],
+                         delta_factors: tuple[float, ...] = (0.80, 0.90, 1.00,
+                                                             1.10, 1.20)
+                         ) -> pd.DataFrame:
+    """For each country, re-fit mu (M1 constant lag) under adjusted delta.
+
+    Addresses Inklaar's critique: if delta drifts, some of what is attributed
+    to mu(t) may instead belong to delta(t). Reports mu_hat for each
+    delta_factor."""
+    rows = []
+    for c in countries:
+        alpha = 1 - float(np.clip(np.mean(c.labsh), 0.40, 0.75))
+        L = c.emp * c.avh
+        LH = L * c.hc
+        logY = np.log(c.Y)
+        logLH = np.log(LH)
+        rec = {"country": c.country, "iso3": c.iso, "alpha": alpha}
+        for df in delta_factors:
+            delta_adj = c.delta * df
+            mu_hat = fit_mu_const(c.I, delta_adj, c.K0, logY, logLH, alpha)
+            rec[f"mu_d{df:.2f}"] = mu_hat
+        # also fit tempo (mu0, mu1) under each delta factor
+        for df in delta_factors:
+            delta_adj = c.delta * df
+            mu0, mu1 = fit_tempo(c.I, delta_adj, c.K0, logY, logLH, alpha,
+                                 c.years)
+            rec[f"mu0_d{df:.2f}"] = mu0
+            rec[f"mu1_d{df:.2f}"] = mu1
+        rows.append(rec)
+        base_mu = rec["mu_d1.00"]
+        lo_mu = rec["mu_d0.80"]
+        hi_mu = rec["mu_d1.20"]
+        print(f"  [dsens] {c.country:22s}  "
+              f"mu(d*0.8)={lo_mu:.2f}  mu(d*1.0)={base_mu:.2f}  "
+              f"mu(d*1.2)={hi_mu:.2f}",
+              flush=True)
+    return pd.DataFrame(rows)
+
+
+# ----- Analysis 8: conditional OOS (interior-solution subsample) -----
+def run_conditional_oos(oos: pd.DataFrame,
+                        fair: pd.DataFrame) -> dict:
+    """Re-compute OOS statistics restricted to countries with interior mu_M1.
+
+    Interior solutions are those where mu_M1 is not at the grid boundary
+    (0.01 or 6.0).  These are the countries for which the tempo correction
+    is genuinely informative; boundary-solution countries are effectively M0.
+    """
+    mu = fair.set_index("country")["mu_M1"]
+    interior = mu[(mu > 0.02) & (mu < 5.9)].index.tolist()
+    boundary = mu[~mu.index.isin(interior)].index.tolist()
+
+    oos_int = oos[oos["country"].isin(interior)]
+    oos_bnd = oos[oos["country"].isin(boundary)]
+
+    result: dict = {"interior_countries": interior,
+                    "boundary_countries": boundary,
+                    "n_interior": len(oos_int),
+                    "n_boundary": len(oos_bnd)}
+    for subset_name, subset_df in [("interior", oos_int),
+                                   ("boundary", oos_bnd),
+                                   ("all", oos)]:
+        for model in ("M0", "M1", "M2", "M3", "M4"):
+            col = f"{model}_oos_mape"
+            if col in subset_df.columns:
+                vals = subset_df[col].dropna()
+                result[f"{subset_name}_{model}_median"] = float(vals.median())
+                result[f"{subset_name}_{model}_mean"] = float(vals.mean())
+    print(f"  [cond_oos] interior={len(oos_int)}, boundary={len(oos_bnd)}",
+          flush=True)
+    for model in ("M0", "M1", "M2", "M4"):
+        k = f"interior_{model}_median"
+        v = result.get(k, "N/A")
+        fmt = f"{v:.2f}" if isinstance(v, (int, float)) else str(v)
+        print(f"    {model} interior median={fmt}", flush=True)
+    return result
+
+
+# ----- Analysis 9: extended OOS metrics -----
+def run_extended_oos(countries: list[Country]) -> pd.DataFrame:
+    """Compute additional OOS metrics beyond MAPE:
+    - direction accuracy (fraction of years with correct GDP growth sign)
+    - CWON trajectory RMSE (how well PIM K tracks CWON PCA)
+    """
+    rows = []
+    for c in countries:
+        mask_train = c.years <= 2014
+        mask_test = np.isin(c.years, OOS_TEST_YEARS)
+        if mask_test.sum() < 3 or mask_train.sum() < 20:
+            continue
+        I_train = c.I[mask_train]
+        delta_train = c.delta[mask_train]
+        years_train = c.years[mask_train]
+        Y_train = c.Y[mask_train]
+        emp_t = c.emp[mask_train]; avh_t = c.avh[mask_train]
+        hc_t = c.hc[mask_train]
+        L_train = emp_t * avh_t * hc_t
+        L_full = c.emp * c.avh * c.hc
+        logY_train = np.log(Y_train); logLH_train = np.log(L_train)
+        logL_train = np.log(emp_t * avh_t)
+        alpha = 1 - float(np.clip(np.mean(c.labsh[mask_train]), 0.40, 0.75))
+        K0 = c.K0
+
+        K_intan_full = build_intan_stock(c.Y, c.rnd_share)
+        if K_intan_full is None:
+            continue
+        K_intan_train = K_intan_full[mask_train]
+
+        mu1_tr = fit_mu_const(I_train, delta_train, K0, logY_train,
+                              logLH_train, alpha)
+        mu0_tr, mu1e_tr = fit_tempo(I_train, delta_train, K0, logY_train,
+                                    logLH_train, alpha, years_train)
+        K_M3_train = pim_instant(I_train, delta_train, K0)
+        beta3_tr = fit_beta_given_K(K_M3_train, K_intan_train,
+                                    logY_train, logL_train, alpha)
+        idx_map = {int(y): ii for ii, y in enumerate(c.years)}
+        ki = []
+        for y in c.cwon_years:
+            ii = idx_map.get(int(y), None)
+            ki.append(ii if (ii is not None and int(y) <= 2014) else None)
+        mu4_tr, beta4_tr, _, _ = fit_joint(
+            I_train, delta_train, K0, K_intan_train, logY_train,
+            logL_train, alpha, ki[:len(np.arange(1995, 2015))],
+            c.pca[c.cwon_years <= 2014])
+
+        K_full = {
+            "M0": pim_instant(c.I, c.delta, K0),
+            "M1": pim_lagged(c.I, c.delta, K0, mu1_tr),
+            "M2": pim_lagged_tempo(c.I, c.delta, K0, mu0_tr, mu1e_tr,
+                                   c.years),
+            "M3": pim_instant(c.I, c.delta, K0),
+            "M4": pim_lagged(c.I, c.delta, K0, mu4_tr) if np.isfinite(mu4_tr)
+            else None,
+        }
+        beta_by = {"M0": 0.0, "M1": 0.0, "M2": 0.0, "M3": beta3_tr,
+                   "M4": beta4_tr if np.isfinite(beta4_tr) else 0.0}
+
+        def forecast_level(Ktang_full, beta):
+            logK = np.log(np.where(Ktang_full > 0, Ktang_full, 1e-6))
+            if beta > 0:
+                logI = np.log(np.where(K_intan_full > 0, K_intan_full, 1e-6))
+                logL_full = np.log(c.emp * c.avh)
+                w_L = 1 - alpha - beta
+                raw_tfp = np.log(c.Y) - alpha * logK - beta * logI - w_L * logL_full
+            else:
+                logLH = np.log(L_full)
+                raw_tfp = np.log(c.Y) - alpha * logK - (1 - alpha) * logLH
+            train_dec_mask = (c.years >= 2005) & (c.years <= 2014)
+            if train_dec_mask.sum() == 0:
+                return None
+            tfp_proj = float(np.mean(raw_tfp[train_dec_mask]))
+            if beta > 0:
+                pred_logY = (alpha * logK + beta * logI +
+                             w_L * np.log(c.emp * c.avh) + tfp_proj)
+            else:
+                pred_logY = (alpha * logK + (1 - alpha) * np.log(L_full)
+                             + tfp_proj)
+            return pred_logY
+
+        out = {"country": c.country, "iso3": c.iso}
+        actual_logY = np.log(c.Y)
+        actual_growth = np.diff(actual_logY)
+
+        for name, K in K_full.items():
+            if K is None:
+                out[f"{name}_dir_acc"] = np.nan
+                out[f"{name}_cwon_rmse"] = np.nan
+                continue
+            pred_logY = forecast_level(K, beta_by[name])
+            if pred_logY is None:
+                out[f"{name}_dir_acc"] = np.nan
+                out[f"{name}_cwon_rmse"] = np.nan
+                continue
+
+            # Direction accuracy on test years
+            pred_growth = np.diff(pred_logY)
+            test_idx = np.where(mask_test)[0]
+            if len(test_idx) > 1:
+                # growth indices are offset by 1
+                growth_idx = [ti - 1 for ti in test_idx if ti > 0
+                              and ti - 1 < len(actual_growth)
+                              and ti - 1 < len(pred_growth)]
+                if growth_idx:
+                    signs_match = np.sign(actual_growth[growth_idx]) == \
+                        np.sign(pred_growth[growth_idx])
+                    out[f"{name}_dir_acc"] = float(np.mean(signs_match) * 100)
+                else:
+                    out[f"{name}_dir_acc"] = np.nan
+            else:
+                out[f"{name}_dir_acc"] = np.nan
+
+            # CWON trajectory RMSE: how well does model K track CWON PCA
+            # on overlapping test years (2015-2019)
+            K_total = K.copy()
+            if beta_by[name] > 0:
+                K_total = K + beta_by[name] * K_intan_full
+            # demeaned log comparison on CWON overlap
+            cwon_test_mask = (c.cwon_years >= 2015) & (c.cwon_years <= 2019)
+            cwon_test_years = c.cwon_years[cwon_test_mask]
+            cwon_test_vals = c.pca[cwon_test_mask]
+            if len(cwon_test_years) < 2:
+                out[f"{name}_cwon_rmse"] = np.nan
+                continue
+            pim_at_cwon = []
+            for cy in cwon_test_years:
+                j = idx_map.get(int(cy))
+                if j is not None and K_total[j] > 0:
+                    pim_at_cwon.append(np.log(K_total[j]))
+                else:
+                    pim_at_cwon.append(np.nan)
+            pim_at_cwon = np.array(pim_at_cwon)
+            log_cwon = np.log(np.where(cwon_test_vals > 0, cwon_test_vals,
+                                       np.nan))
+            valid = np.isfinite(pim_at_cwon) & np.isfinite(log_cwon)
+            if valid.sum() < 2:
+                out[f"{name}_cwon_rmse"] = np.nan
+                continue
+            # demean both
+            lp = pim_at_cwon[valid] - pim_at_cwon[valid].mean()
+            lc = log_cwon[valid] - log_cwon[valid].mean()
+            out[f"{name}_cwon_rmse"] = float(np.sqrt(np.mean((lp - lc) ** 2)))
+
+        rows.append(out)
+        print(f"  [ext_oos] {c.country:22s}  "
+              f"M0_dir={out['M0_dir_acc']:.0f}%  "
+              f"M4_dir={out['M4_dir_acc']:.0f}%  "
+              f"M0_cwon={out['M0_cwon_rmse']:.4f}  "
+              f"M4_cwon={out['M4_cwon_rmse']:.4f}",
+              flush=True)
+    return pd.DataFrame(rows)
+
+
+# ----- Analysis 10: cross-sectional regression of rho2 -----
+def run_rho2_regression(rpim: pd.DataFrame,
+                        countries: list[Country]) -> dict:
+    """Regress rho2 (under M0 and M4) on R&D intensity and other
+    asset-composition proxies across countries.
+
+    This addresses the reviewer criticism about lack of engagement with
+    asset-specific profiles by showing that rho2 variation is systematically
+    related to observable asset-composition differences.
+    """
+    # Build cross-section of country-level R&D intensity (mean over sample)
+    rnd_by_country = {}
+    for c in countries:
+        rnd_mean = float(np.nanmean(c.rnd_share))
+        if np.isfinite(rnd_mean):
+            rnd_by_country[c.country] = rnd_mean
+
+    merged = rpim.copy()
+    merged["rnd_intensity"] = merged["country"].map(rnd_by_country)
+    merged = merged.dropna(subset=["rnd_intensity", "M0_rho2", "M4_rho2"])
+
+    result: dict = {"n_countries": len(merged)}
+
+    for model in ("M0", "M4"):
+        y = merged[f"{model}_rho2"].values
+        x = merged["rnd_intensity"].values
+        if len(y) < 5:
+            continue
+        X = np.column_stack([np.ones_like(x), x])
+        params, _, _, _ = np.linalg.lstsq(X, y, rcond=None)
+        y_hat = X @ params
+        ss_res = float(np.sum((y - y_hat) ** 2))
+        ss_tot = float(np.sum((y - y.mean()) ** 2))
+        r2 = 1.0 - ss_res / ss_tot if ss_tot > 0 else np.nan
+        # t-statistic for slope
+        n = len(y)
+        se = np.sqrt(ss_res / (n - 2)) if n > 2 else np.nan
+        se_x = np.sqrt(np.sum((x - x.mean()) ** 2))
+        se_beta = se / se_x if se_x > 0 else np.nan
+        t_stat = params[1] / se_beta if np.isfinite(se_beta) and se_beta > 0 \
+            else np.nan
+        result[f"{model}_intercept"] = float(params[0])
+        result[f"{model}_slope"] = float(params[1])
+        result[f"{model}_R2"] = float(r2)
+        result[f"{model}_t_stat"] = float(t_stat)
+        result[f"{model}_n"] = n
+        print(f"  [rho2_reg] {model}: slope={params[1]:.4f} "
+              f"R2={r2:.3f} t={t_stat:.2f} n={n}", flush=True)
+
+    # Also store the data for plotting
+    result["countries"] = merged["country"].tolist()
+    result["iso3"] = merged["iso3"].tolist()
+    result["rnd_intensity"] = merged["rnd_intensity"].tolist()
+    result["M0_rho2"] = merged["M0_rho2"].tolist()
+    result["M4_rho2"] = merged["M4_rho2"].tolist()
+
+    return result
+
+
 # ----- Figures -----
 def make_figures(fair: pd.DataFrame, oos: pd.DataFrame,
                  boot: pd.DataFrame, gamma: pd.DataFrame):
@@ -759,12 +1143,73 @@ def main():
     gamma = run_gamma_price(countries, fair)
     gamma.to_csv(os.path.join(DATA, "gamma_price.csv"), index=False)
 
+    print("\n--- Analysis 6: Relational PIM (M5) ---", flush=True)
+    rpim = run_relational_pim(countries, fair)
+    rpim.to_csv(os.path.join(DATA, "rpim.csv"), index=False)
+    rpim_summary = {
+        label: {
+            "rho2_median": float(rpim[f"{label}_rho2"].median()),
+            "rho2_mean": float(rpim[f"{label}_rho2"].mean()),
+            "rho1_median": float(rpim[f"{label}_rho1"].median()),
+            "R2_median": float(rpim[f"{label}_R2"].median()),
+        } for label in ("M0", "M1", "M2", "M4")
+    }
+    with open(os.path.join(DATA, "rpim_summary.json"), "w") as fh:
+        json.dump(rpim_summary, fh, indent=2)
+
+    print("\n--- Analysis 7: delta-mu sensitivity ---", flush=True)
+    dsens = run_delta_sensitivity(countries)
+    dsens.to_csv(os.path.join(DATA, "delta_sensitivity.csv"), index=False)
+    dsens_summary = {
+        f"d{df:.2f}": {
+            "mu_median": float(dsens[f"mu_d{df:.2f}"].median()),
+            "mu_mean": float(dsens[f"mu_d{df:.2f}"].mean()),
+        } for df in (0.80, 0.90, 1.00, 1.10, 1.20)
+    }
+    with open(os.path.join(DATA, "delta_sensitivity_summary.json"), "w") as fh:
+        json.dump(dsens_summary, fh, indent=2)
+
+    print("\n--- Analysis 8: conditional OOS ---", flush=True)
+    cond_oos = run_conditional_oos(oos, fair)
+    with open(os.path.join(DATA, "conditional_oos.json"), "w") as fh:
+        json.dump(cond_oos, fh, indent=2)
+
+    print("\n--- Analysis 9: extended OOS metrics ---", flush=True)
+    ext_oos = run_extended_oos(countries)
+    ext_oos.to_csv(os.path.join(DATA, "extended_oos.csv"), index=False)
+    ext_oos_summary = {}
+    for model in ("M0", "M1", "M2", "M3", "M4"):
+        dc = f"{model}_dir_acc"
+        cr = f"{model}_cwon_rmse"
+        if dc in ext_oos.columns:
+            ext_oos_summary[f"{model}_dir_acc_median"] = float(
+                ext_oos[dc].dropna().median())
+        if cr in ext_oos.columns:
+            ext_oos_summary[f"{model}_cwon_rmse_median"] = float(
+                ext_oos[cr].dropna().median())
+    with open(os.path.join(DATA, "extended_oos_summary.json"), "w") as fh:
+        json.dump(ext_oos_summary, fh, indent=2)
+
+    print("\n--- Analysis 10: rho2 cross-sectional regression ---", flush=True)
+    rho2_reg = run_rho2_regression(rpim, countries)
+    with open(os.path.join(DATA, "rho2_regression.json"), "w") as fh:
+        json.dump(rho2_reg, fh, indent=2)
+
     print("\n--- Figures ---", flush=True)
     make_figures(fair, oos, boot, gamma)
 
     print("\n=== SUMMARY ===", flush=True)
     print(json.dumps(fair_summary, indent=2))
     print("OOS medians:", json.dumps(oos_summary, indent=2))
+    print("RPIM summary:", json.dumps(rpim_summary, indent=2))
+    print("Delta-mu sensitivity:", json.dumps(dsens_summary, indent=2))
+    print("Conditional OOS:", json.dumps(
+        {k: v for k, v in cond_oos.items()
+         if not isinstance(v, list)}, indent=2))
+    print("Extended OOS:", json.dumps(ext_oos_summary, indent=2))
+    print("Rho2 regression:", json.dumps(
+        {k: v for k, v in rho2_reg.items()
+         if not isinstance(v, list)}, indent=2))
 
 
 if __name__ == "__main__":
