@@ -40,6 +40,9 @@ CWON_TS = "/home/ubuntu/repos/wip_cwon/gdp_cwon_integration/data/cwon_integratio
 
 
 def make_fig3(lang: str = "en"):
+    if not os.path.exists(CWON_TS):
+        print(f"skipping fig3 ({lang}): {CWON_TS} not found")
+        return
     with open(CWON_TS) as fh:
         ts = json.load(fh)
     highlight = [
@@ -152,7 +155,7 @@ def make_fig5(lang: str = "en"):
                 arrowprops=dict(arrowstyle="->", lw=1.5))
     ax.annotate("", xy=(7.1, 4.7), xytext=(5.9, 4.7),
                 arrowprops=dict(arrowstyle="->", lw=1.5))
-    ax.text(8, 4.1, labels["balance"], ha="center", fontsize=9,
+    ax.text(8, 3.85, labels["balance"], ha="center", fontsize=9,
             style="italic")
     ax.text(0.6, 4.7, labels["arrow_demog"], ha="center", va="center",
             fontsize=11, fontweight="bold")
@@ -165,7 +168,7 @@ def make_fig5(lang: str = "en"):
                 arrowprops=dict(arrowstyle="->", lw=1.5))
     ax.annotate("", xy=(7.1, 1.7), xytext=(5.9, 1.7),
                 arrowprops=dict(arrowstyle="->", lw=1.5))
-    ax.text(8, 1.1, labels["balance_c"], ha="center", fontsize=9,
+    ax.text(8, 0.85, labels["balance_c"], ha="center", fontsize=9,
             style="italic")
     ax.text(0.6, 1.7, labels["arrow_capital"], ha="center", va="center",
             fontsize=11, fontweight="bold")
@@ -348,6 +351,389 @@ def make_fig4_bilingual(lang: str = "en"):
     print("wrote", out)
 
 
+def make_fig6_rpim_bilingual(lang: str = "en"):
+    """Fig. 6: Relational PIM diagnostic — rho2 distribution across countries
+    under M0 vs M4, and scatter of rho1 vs rho2."""
+    rpim = pd.read_csv(os.path.join(DATA, "rpim.csv"))
+    labels = {
+        "en": {
+            "title": "Fig. 6. Relational PIM diagnostics: "
+                     r"$\hat{\rho}_2$ across 39 countries",
+            "rho2": r"$\hat{\rho}_2$ (elasticity of PIM K w.r.t. CWON PCA)",
+            "rho1": r"$\hat{\rho}_1$ (intercept)",
+            "country": "Country",
+            "panel_a": r"(a) $\hat{\rho}_2$ by country (M0 vs M4)",
+            "panel_b": r"(b) $\hat{\rho}_1$ vs $\hat{\rho}_2$ (M4)",
+            "m0": "M0 (instant PIM)",
+            "m4": "M4 (joint tempo+intangible)",
+            "ref_line": r"$\rho_2=1$ (perfect consistency)",
+        },
+        "ja": {
+            "title": r"図6. 関係型PIM診断: 39カ国の$\hat{\rho}_2$",
+            "rho2": r"$\hat{\rho}_2$（PIM KのCWON PCAに対する弾力性）",
+            "rho1": r"$\hat{\rho}_1$（切片）",
+            "country": "国",
+            "panel_a": r"(a) 国別$\hat{\rho}_2$（M0 vs M4）",
+            "panel_b": r"(b) $\hat{\rho}_1$ vs $\hat{\rho}_2$（M4）",
+            "m0": "M0（即時PIM）",
+            "m4": "M4（テンポ＋無形の同時推定）",
+            "ref_line": r"$\rho_2=1$（完全整合）",
+        },
+    }[lang]
+
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(14, 9))
+
+    # Panel (a): rho2 by country, M0 vs M4
+    s = rpim.sort_values("M0_rho2").reset_index(drop=True)
+    y = np.arange(len(s))
+    ax1.barh(y - 0.15, s["M0_rho2"].values, 0.3, label=labels["m0"],
+             color="#888888", alpha=0.7)
+    ax1.barh(y + 0.15, s["M4_rho2"].values, 0.3, label=labels["m4"],
+             color="#c44e52", alpha=0.7)
+    ax1.axvline(1.0, color="black", ls="--", lw=0.8, label=labels["ref_line"])
+    ax1.set_yticks(y)
+    ax1.set_yticklabels(s["country"].values, fontsize=7)
+    ax1.set_xlabel(labels["rho2"])
+    ax1.set_title(labels["panel_a"])
+    ax1.legend(loc="lower right", fontsize=8)
+    ax1.grid(axis="x", alpha=0.3)
+
+    # Panel (b): scatter rho1 vs rho2 (M4)
+    ax2.scatter(rpim["M4_rho2"], rpim["M4_rho1"], c="#c44e52", s=25,
+                alpha=0.7, edgecolors="black", lw=0.3)
+    ax2.axvline(1.0, color="black", ls="--", lw=0.8)
+    ax2.axhline(0.0, color="grey", ls=":", lw=0.5)
+    for _, row in rpim.iterrows():
+        if abs(row["M4_rho2"] - 1.0) > 0.25 or abs(row["M4_rho1"]) > 15:
+            ax2.annotate(row["iso3"], (row["M4_rho2"], row["M4_rho1"]),
+                         fontsize=7, alpha=0.8)
+    ax2.set_xlabel(labels["rho2"])
+    ax2.set_ylabel(labels["rho1"])
+    ax2.set_title(labels["panel_b"])
+    ax2.grid(alpha=0.3)
+
+    fig.suptitle(labels["title"], y=0.99, fontsize=12)
+    plt.tight_layout(rect=[0, 0, 1, 0.97])
+    out = os.path.join(FIG, f"fig6_rpim_{lang}.png")
+    plt.savefig(out, dpi=180, bbox_inches="tight")
+    plt.close()
+    print("wrote", out)
+
+
+def make_fig7_delta_sensitivity_bilingual(lang: str = "en"):
+    """Fig. 7: delta-mu sensitivity — how mu_hat changes when delta is
+    perturbed by +/-20%."""
+    dsens = pd.read_csv(os.path.join(DATA, "delta_sensitivity.csv"))
+    delta_factors = [0.80, 0.90, 1.00, 1.10, 1.20]
+    labels = {
+        "en": {
+            "title": r"Fig. 7. $\delta$-$\mu$ sensitivity: "
+                     r"$\hat{\mu}$ under $\pm 20\%$ depreciation perturbation",
+            "xlab": r"Depreciation adjustment factor ($\delta \times$ factor)",
+            "ylab": r"$\hat{\mu}$ (constant lag, years)",
+            "highlight": {"Japan": "Japan", "United States": "United States",
+                          "Germany": "Germany", "Republic of Korea": "Korea",
+                          "United Kingdom": "United Kingdom"},
+            "other": "Other countries",
+        },
+        "ja": {
+            "title": r"図7. $\delta$-$\mu$感度分析: "
+                     r"減価償却率$\pm 20\%$変動下の$\hat{\mu}$",
+            "xlab": r"減価償却率調整係数（$\delta \times$ 係数）",
+            "ylab": r"$\hat{\mu}$（固定ラグ, 年）",
+            "highlight": {"Japan": "日本", "United States": "米国",
+                          "Germany": "ドイツ", "Republic of Korea": "韓国",
+                          "United Kingdom": "英国"},
+            "other": "その他の国",
+        },
+    }[lang]
+
+    fig, ax = plt.subplots(figsize=(10, 6))
+
+    # Identify countries whose mu_hat varies with delta (range > 0.01)
+    varying = {}
+    for _, row in dsens.iterrows():
+        vals = [row[f"mu_d{df:.2f}"] for df in delta_factors]
+        if max(vals) - min(vals) > 0.01:
+            varying[row["country"]] = vals
+
+    # Countries to show: the 5 highlighted + any other varying countries
+    highlight_countries = list(labels["highlight"].keys())
+
+    # Colours and markers for highlighted countries
+    hl_colors = ["#c44e52", "#4c72b0", "#55a868", "#dd8452", "#8172b2"]
+    hl_markers = ["o", "s", "D", "^", "p"]
+
+    # Additional varying countries (not in highlight list)
+    extra_countries = [c for c in varying if c not in highlight_countries]
+    extra_colors = ["#e377c2", "#17becf", "#bcbd22", "#7f7f7f", "#9467bd",
+                    "#8c564b", "#d62728"]
+    extra_markers = ["v", "X", "P", "H", "*", "d", ">"]
+    extra_display = {
+        "en": {
+            "Colombia": "Colombia", "Luxembourg": "Luxembourg",
+            "Slovakia": "Slovakia", "Slovenia": "Slovenia",
+            "Sweden": "Sweden",
+        },
+        "ja": {
+            "Colombia": "コロンビア", "Luxembourg": "ルクセンブルク",
+            "Slovakia": "スロバキア", "Slovenia": "スロベニア",
+            "Sweden": "スウェーデン",
+        },
+    }[lang]
+
+    # Collect all plotted country values
+    all_vals = {}
+    for country in highlight_countries:
+        row = dsens[dsens["country"] == country]
+        if row.empty:
+            continue
+        all_vals[country] = [
+            float(row[f"mu_d{df:.2f}"].iloc[0]) for df in delta_factors]
+    for country in extra_countries:
+        all_vals[country] = [float(v) for v in varying[country]]
+
+    # Apply small symmetric vertical jitter to separate overlapping lines
+    jitter_step = 0.005
+    baseline_groups: dict[float, list[str]] = {}
+    for country in list(highlight_countries) + extra_countries:
+        if country not in all_vals:
+            continue
+        baseline = round(all_vals[country][2], 4)
+        baseline_groups.setdefault(baseline, []).append(country)
+
+    jittered_vals = {}
+    for baseline, members in baseline_groups.items():
+        n = len(members)
+        for idx, country in enumerate(members):
+            offset = (idx - (n - 1) / 2) * jitter_step
+            jittered_vals[country] = [v + offset for v in all_vals[country]]
+
+    # Plot highlighted countries
+    for country, color, marker in zip(
+            highlight_countries, hl_colors, hl_markers):
+        if country not in jittered_vals:
+            continue
+        vals = jittered_vals[country]
+        display_name = labels["highlight"][country]
+        ax.plot(delta_factors, vals, marker=marker, linestyle="-",
+                color=color, lw=2, ms=7, label=display_name)
+
+    # Plot additional varying countries individually
+    for i, country in enumerate(extra_countries):
+        if country not in jittered_vals:
+            continue
+        vals = jittered_vals[country]
+        color = extra_colors[i % len(extra_colors)]
+        marker = extra_markers[i % len(extra_markers)]
+        display_name = extra_display.get(country, country)
+        ax.plot(delta_factors, vals, marker=marker, linestyle="--",
+                color=color, lw=1.5, ms=6, label=display_name)
+
+    ax.set_xlabel(labels["xlab"])
+    ax.set_ylabel(labels["ylab"])
+    ax.set_title(labels["title"], fontsize=11)
+    ax.set_xticks(delta_factors)
+    ax.set_xticklabels([f"{df:.2f}" for df in delta_factors])
+    ax.legend(loc="best", fontsize=9)
+    ax.grid(alpha=0.3)
+    plt.tight_layout()
+    out = os.path.join(FIG, f"fig7_delta_sensitivity_{lang}.png")
+    plt.savefig(out, dpi=180)
+    plt.close()
+    print("wrote", out)
+
+
+def make_table3_rpim():
+    """Table 3: Relational PIM diagnostics summary."""
+    rpim = pd.read_csv(os.path.join(DATA, "rpim.csv"))
+    rows = []
+    for label in ("M0", "M1", "M2", "M4"):
+        rho2 = rpim[f"{label}_rho2"]
+        rho1 = rpim[f"{label}_rho1"]
+        r2 = rpim[f"{label}_R2"]
+        n_consistent = int((rho2.between(0.9, 1.1)).sum())
+        rows.append({
+            "Model": label,
+            "rho2 median": round(float(np.nanmedian(rho2)), 3),
+            "rho2 IQR": f"[{float(np.nanquantile(rho2, 0.25)):.3f}, "
+                        f"{float(np.nanquantile(rho2, 0.75)):.3f}]",
+            "rho1 median": round(float(np.nanmedian(rho1)), 2),
+            "R2 median": round(float(np.nanmedian(r2)), 3),
+            "N(rho2 in 0.9-1.1)": n_consistent,
+            "N total": int(rho2.notna().sum()),
+        })
+    t3 = pd.DataFrame(rows)
+    t3.to_csv(os.path.join(TAB, "table3_rpim.csv"), index=False)
+    print("wrote table3_rpim")
+
+
+def make_fig8_conditional_oos_bilingual(lang: str = "en"):
+    """Fig. 8: conditional OOS — MAPE for interior-solution vs boundary
+    countries, showing that tempo correction is more effective where mu is
+    genuinely informative."""
+    cond_path = os.path.join(DATA, "conditional_oos.json")
+    if not os.path.exists(cond_path):
+        print("skip fig8 — conditional_oos.json not found")
+        return
+    with open(cond_path) as fh:
+        cond = json.load(fh)
+
+    labels = {
+        "en": {
+            "title": "Fig. 8. Conditional OOS evaluation: "
+                     "interior-solution vs boundary countries",
+            "ylabel": "Median out-of-sample MAPE (%)",
+            "interior": f"Interior ({cond['n_interior']} countries)",
+            "boundary": f"Boundary ({cond['n_boundary']} countries)",
+            "all": "All (39 countries)",
+        },
+        "ja": {
+            "title": "図8. 条件付き標本外評価: "
+                     "内点解国 vs 境界解国",
+            "ylabel": "標本外MAPE中央値（%）",
+            "interior": f"内点解（{cond['n_interior']}カ国）",
+            "boundary": f"境界解（{cond['n_boundary']}カ国）",
+            "all": "全体（39カ国）",
+        },
+    }[lang]
+
+    models = ["M0", "M1", "M2", "M3", "M4"]
+    int_vals = [cond.get(f"interior_{m}_median", np.nan) for m in models]
+    bnd_vals = [cond.get(f"boundary_{m}_median", np.nan) for m in models]
+    all_vals = [cond.get(f"all_{m}_median", np.nan) for m in models]
+
+    x = np.arange(len(models))
+    width = 0.25
+    fig, ax = plt.subplots(figsize=(10, 6))
+    ax.bar(x - width, int_vals, width, label=labels["interior"],
+           color="#4c72b0", alpha=0.85)
+    ax.bar(x, bnd_vals, width, label=labels["boundary"],
+           color="#dd8452", alpha=0.85)
+    ax.bar(x + width, all_vals, width, label=labels["all"],
+           color="#888888", alpha=0.65)
+
+    ax.set_xticks(x)
+    ax.set_xticklabels(models)
+    ax.set_ylabel(labels["ylabel"])
+    ax.set_title(labels["title"], fontsize=11)
+    ax.legend(loc="best", fontsize=9)
+    ax.grid(axis="y", alpha=0.3)
+
+    # Add value labels on bars
+    for bars in ax.containers:
+        for bar in bars:
+            h = bar.get_height()
+            if np.isfinite(h):
+                ax.annotate(f"{h:.1f}", (bar.get_x() + bar.get_width() / 2, h),
+                            ha="center", va="bottom", fontsize=7)
+
+    plt.tight_layout()
+    out = os.path.join(FIG, f"fig8_conditional_oos_{lang}.png")
+    plt.savefig(out, dpi=180)
+    plt.close()
+    print("wrote", out)
+
+
+def make_fig9_rho2_regression_bilingual(lang: str = "en"):
+    """Fig. 9: cross-sectional regression of rho2 on R&D intensity."""
+    reg_path = os.path.join(DATA, "rho2_regression.json")
+    if not os.path.exists(reg_path):
+        print("skip fig9 — rho2_regression.json not found")
+        return
+    with open(reg_path) as fh:
+        reg = json.load(fh)
+
+    labels = {
+        "en": {
+            "title": r"Fig. 9. Cross-sectional regression: "
+                     r"$\hat{\rho}_2$ on R&D intensity",
+            "xlabel": "Mean R&D expenditure (% of GDP)",
+            "ylabel": r"$\hat{\rho}_2$ (PIM-CWON elasticity)",
+            "panel_a": r"(a) M0: $\hat{\rho}_2$ vs R&D intensity",
+            "panel_b": r"(b) M4: $\hat{\rho}_2$ vs R&D intensity",
+            "fit": "OLS fit",
+            "ref": r"$\rho_2 = 1$",
+        },
+        "ja": {
+            "title": r"図9. クロスセクション回帰: "
+                     r"$\hat{\rho}_2$とR&D強度",
+            "xlabel": "平均R&D支出（対GDP比%）",
+            "ylabel": r"$\hat{\rho}_2$（PIM-CWON弾力性）",
+            "panel_a": r"(a) M0: $\hat{\rho}_2$ vs R&D強度",
+            "panel_b": r"(b) M4: $\hat{\rho}_2$ vs R&D強度",
+            "fit": "OLS回帰直線",
+            "ref": r"$\rho_2 = 1$",
+        },
+    }[lang]
+
+    rnd = np.array(reg["rnd_intensity"])
+    m0_rho2 = np.array(reg["M0_rho2"])
+    m4_rho2 = np.array(reg["M4_rho2"])
+    iso3 = reg["iso3"]
+
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(14, 6))
+
+    for ax, rho2, model, panel_label in [
+        (ax1, m0_rho2, "M0", labels["panel_a"]),
+        (ax2, m4_rho2, "M4", labels["panel_b"]),
+    ]:
+        ax.scatter(rnd, rho2, c="#4c72b0" if model == "M0" else "#c44e52",
+                   s=30, alpha=0.7, edgecolors="black", lw=0.3)
+        # Regression line
+        intercept = reg[f"{model}_intercept"]
+        slope = reg[f"{model}_slope"]
+        r2 = reg[f"{model}_R2"]
+        t = reg[f"{model}_t_stat"]
+        x_range = np.linspace(rnd.min() - 0.2, rnd.max() + 0.2, 100)
+        ax.plot(x_range, intercept + slope * x_range, "--",
+                color="black", lw=1.2,
+                label=f"{labels['fit']} (R²={r2:.3f}, t={t:.2f})")
+        ax.axhline(1.0, color="grey", ls=":", lw=0.8, label=labels["ref"])
+        # Label outliers
+        for i, iso in enumerate(iso3):
+            if abs(rho2[i] - 1.0) > 0.3 or rnd[i] > 3.5:
+                ax.annotate(iso, (rnd[i], rho2[i]), fontsize=7, alpha=0.8)
+        ax.set_xlabel(labels["xlabel"])
+        ax.set_ylabel(labels["ylabel"])
+        ax.set_title(panel_label)
+        ax.legend(fontsize=8)
+        ax.grid(alpha=0.3)
+
+    fig.suptitle(labels["title"], y=0.99, fontsize=12)
+    plt.tight_layout(rect=[0, 0, 1, 0.97])
+    out = os.path.join(FIG, f"fig9_rho2_regression_{lang}.png")
+    plt.savefig(out, dpi=180, bbox_inches="tight")
+    plt.close()
+    print("wrote", out)
+
+
+def make_table4_extended_oos():
+    """Table 4: Extended OOS metrics (direction accuracy + CWON RMSE)."""
+    ext_path = os.path.join(DATA, "extended_oos.csv")
+    if not os.path.exists(ext_path):
+        print("skip table4 — extended_oos.csv not found")
+        return
+    ext = pd.read_csv(ext_path)
+    rows = []
+    for model in ("M0", "M1", "M2", "M3", "M4"):
+        dc = f"{model}_dir_acc"
+        cr = f"{model}_cwon_rmse"
+        da = ext[dc].dropna() if dc in ext.columns else pd.Series(dtype=float)
+        cw = ext[cr].dropna() if cr in ext.columns else pd.Series(dtype=float)
+        rows.append({
+            "Model": model,
+            "Dir. acc. median (%)": round(float(da.median()), 1) if len(da) else "",
+            "Dir. acc. mean (%)": round(float(da.mean()), 1) if len(da) else "",
+            "CWON RMSE median": f"{float(cw.median()):.4f}" if len(cw) else "",
+            "CWON RMSE mean": f"{float(cw.mean()):.4f}" if len(cw) else "",
+            "N": int(da.notna().sum()) if len(da) else 0,
+        })
+    t4 = pd.DataFrame(rows)
+    t4.to_csv(os.path.join(TAB, "table4_extended_oos.csv"), index=False)
+    print("wrote table4_extended_oos")
+
+
 def main():
     for lang in ("en", "ja"):
         make_fig1_bilingual(lang)
@@ -355,11 +741,13 @@ def main():
         make_fig3(lang)
         make_fig4_bilingual(lang)
         make_fig5(lang)
+        make_fig6_rpim_bilingual(lang)
+        make_fig7_delta_sensitivity_bilingual(lang)
+        make_fig8_conditional_oos_bilingual(lang)
+        make_fig9_rho2_regression_bilingual(lang)
     make_tables()
-    # Also make a second-language copy of figs 1/2/4 for JA
-    # (axis labels regenerated later if needed -- for now English plots
-    # are acceptable in JA manuscript with JA captions; but generate JA
-    # versions for pptx consistency)
+    make_table3_rpim()
+    make_table4_extended_oos()
     print("done")
 
 

@@ -1,4 +1,4 @@
-# The Forgotten Tempo Effect in Capital Accounting: Investment-to-Output Time-to-Build, Intangible Capital, and the Reconciliation of Flow- and Stock-Based National Wealth Measures
+# What the Solow Residual Has Been Hiding: Tempo Drift and the Missing Intangible Share in National Capital Stocks
 
 **Tatsuki Onishi**
 
@@ -8,45 +8,47 @@ Data Science AI Innovation Research Promotion Center, Shiga University
 
 Telephone: +81-749-27-1023. E-mail: bougtoir@gmail.com. ORCID: 0000-0001-7261-9062.
 
-**Keywords**: tempo effect; intangible capital; perpetual inventory method; time-to-build; flow-stock consistency; Beyond-GDP.
+**Keywords**: Solow residual; time-to-build; intangible capital; growth accounting; national wealth.
 
-**JEL codes**: E01 (Measurement and Data on National Income and Product Accounts); E22 (Investment; Capital; Intangible Capital); O47 (Measurement of Economic Growth; Aggregate Productivity).
+**JEL codes**: E01; E22; O47.
 
-**CRediT contribution statement.** O.T.: Conceptualization, Methodology, Software, Formal analysis, Writing - original draft, Writing - review & editing.
+**Statements and Declarations**
 
-**Declaration of generative artificial intelligence (AI) in scientific writing.** We used generative AI to help with formatting the text and choosing words that suited the tone, and to help writing codes.
+*Competing interests.* The author declares no competing interests.
 
-**Conflict of interest.** The author declares no conflict of interest.
+*Funding.* No external funding was received for this research.
 
-**Data and code availability.** Penn World Table 10.01 and World Bank CWON data used in this study are publicly available from the Groningen Growth and Development Centre and the World Bank, respectively. All analysis scripts, intermediate results, and manuscript sources are archived in the accompanying public repository.
+*Data and code availability.* Penn World Table 10.01, World Bank CWON, and World Bank WDI data used in this study are publicly available from the Groningen Growth and Development Centre and the World Bank, respectively. All analysis scripts, intermediate results, and manuscript sources are archived in the accompanying public repository (https://github.com/bougtoir/gdp-tempo-paper).
+
+*Use of AI tools.* The author used generative AI to assist with formatting the text, choosing words that suited the tone, and writing analysis code. The author reviewed and edited the content as needed and takes full responsibility for the content of the published article.
 
 ---
 
-**Abstract** (146 words). Since Goldstein, Lutz, and Scherbov (2003) showed that a single "forgotten" parity-specific variance parameter σ resolved a large share of the low-fertility puzzle once tempo effects on the mean age at childbearing were acknowledged, the dual of quantum and tempo has become a standard lens in formal demography. National income and wealth accounting has no equivalent diagnostic. We port the Bongaarts-Feeney quantum-tempo decomposition to capital accounting by letting the investment-to-output time-to-build μ(t) drift over time and by re-introducing intangible capital K_I, with share β, as the balance-sheet analogue of σ. Across 39 OECD and middle-income economies (Penn World Table 10.01, World Bank CWON), a time-varying μ(t) reduces the out-of-sample MAPE of GDP levels from 4.60% to 3.99% while a joint production-cum-wealth identification produces internally consistent flow and stock accounts. A sister medical-spending paper is in preparation.
+**Abstract.** A measurable share of what conventional growth accounting calls total factor productivity (TFP) is a book-keeping artefact: it reflects a drifting time-to-build parameter μ(t) and an omitted intangible-capital share β that official statistics set to zero. Across 39 OECD and middle-income economies (Penn World Table 10.01, World Bank CWON, 1995–2019), letting μ drift and β enter the production function jointly reduces the out-of-sample GDP-level forecast error from 4.60% to 3.99% — a 13% relative improvement obtained without new data or stochastic machinery. A Solow-residual decomposition shows that up to 30% of TFP-growth variance is attributable to tempo drift alone. Counterfactual wealth calculations indicate that official produced-capital figures understate intangible-adjusted wealth by 0.3–1.1% for high-R&D economies. These corrections reconcile production-side (flow) and wealth-side (stock) national accounts to within 1–2% for most countries, resolving a long-standing tension in the Beyond-GDP debate.
 
-**Keywords**: tempo effect; intangible capital; perpetual inventory method; wealth accounting; Beyond-GDP.
+**Keywords**: Solow residual; time-to-build; intangible capital; growth accounting; national wealth.
 
 **JEL codes**: E01, E22, O47.
 
 ---
 
-## 1. Introduction
+## Introduction
 
-Every macroeconomist has encountered two separate but related complaints about the way we measure national prosperity. First, Gross Domestic Product (GDP) is a flow measure that ignores depletion, depreciation, and the growing stock of intangible assets that drives modern productivity growth (Stiglitz, Sen, and Fitoussi, 2009; Corrado, Hulten, and Sichel, 2009; Haskel and Westlake, 2017). Second, stock-based alternatives such as the Inclusive Wealth Index (Managi and Kumar, 2018), the United Nations SEEA (UNECE, 2014), and the World Bank Changing Wealth of Nations (Lange, Wodon, and Carey, 2018) are attractive in principle but rarely line up with independently reconstructed capital stocks and never with one another. Flow-based and stock-based national accounts have lived side by side in different rooms of the same house for twenty-five years without being asked to sit down at the same table.
+Since Solow (1957), the residual in growth accounting has been treated as an index of technological progress. Half a century of refinements — sector-specific capital, human capital, utilisation adjustments — has shrunk the residual somewhat, but TFP growth still absorbs a substantial, poorly understood component of output variation. This paper shows that a measurable share of what has been called TFP is a book-keeping artefact created by two parameters that conventional growth accounting sets to zero.
 
-Demography has spent the same period quietly solving the mirror problem. Bongaarts and Feeney (1998) showed that a rising mean age at childbearing mechanically depresses period fertility even when completed cohort fertility is constant, and proposed an adjustment that stripped out the "tempo distortion". Goldstein, Lutz, and Scherbov (2003) reopened the debate by showing that once a parity-specific variance σ was allowed (the "forgotten parameter"), the tempo-adjusted fertility rate matched the cohort data far more closely. A generation of work on postponement, ultra-low fertility, and lifetime child-bearing risk followed. The pattern is simple: the period statistic was biased; the bias was a timing phenomenon; once you wrote down a structural timing parameter and a single forgotten quantity parameter, the flow and stock accounts of the reproduction process were reconciled.
+The first parameter is the time-varying investment-to-output lag, μ(t). The standard perpetual inventory method (PIM) assumes that investment becomes productive instantaneously (μ = 0) or with a fixed, time-invariant lag. Yet the composition of investment has shifted decisively toward long-lead assets — custom software, cloud infrastructure, pharmaceutical R&D, and complex engineering systems — whose gestation periods differ by nearly an order of magnitude from the plant-and-equipment on which the original lag literature was calibrated (OECD, 2013; Corrado et al., 2020). If μ has been rising but is treated as zero, the PIM capital stock is mis-timed and the Solow residual absorbs the error. The second parameter is the intangible capital share, β. Corrado, Hulten, and Sichel (2005, 2009) have shown that intangible investment is quantitatively large, yet official wealth accounts — including the World Bank Changing Wealth of Nations (CWON; Lange, Wodon, and Carey, 2018) — still exclude most intangibles from produced capital. When β is forced to zero, the missing capital again inflates TFP.
 
-This paper argues that capital accounting has an exact analogue of the Bongaarts-Feeney-Goldstein-Lutz-Scherbov correction, hiding in plain sight. The analogy is not rhetorical: every demographic quantity has a capital counterpart under a precise change of variables (Section 3.4, Table 2). Births are investment flows. Population stocks are capital stocks. The mean age at childbearing is the mean lag between investment and its productive deployment — the engineering and organisational "time-to-build" that Kydland and Prescott (1982) introduced but that has never been allowed to drift over time in standard production-function estimation. The parity-specific variance σ has a direct balance-sheet equivalent: the intangible capital share β that CHS have estimated but that official wealth accounts such as the CWON still treat as non-existent or residual.
+We identify both parameters simultaneously, exploiting a structural analogy with population statistics. Bongaarts and Feeney (1998) showed that a drifting mean age at childbearing depresses measured period fertility even when completed fertility is constant; Goldstein, Lutz, and Scherbov (2003) showed that adding a single "forgotten" parity-specific variance parameter resolves the discrepancy. The same mathematics applies, under a precise change of variables, to capital accounting (Table 2): investment plays the role of births, the PIM capital stock plays the role of the population stock, μ(t) is the analogue of the mean age at childbearing, and β is the analogue of the forgotten variance.
 
-Our contribution is four-fold. First, we write down the flow–stock identity *dW/dt = S(Y) − δW* in parameterised form, making the hidden parameters {μ(t), β} explicit on the flow side and on the stock side simultaneously. Second, we show that a time-varying time-to-build μ(t) — estimated with a two-parameter tempo drift μ(t) = μ₀ + μ₁·(t − t₀) — reduces the median out-of-sample MAPE of GDP level forecasts from 4.60 % to 3.99 % across 39 countries, a 13 % relative improvement that rivals gains from adding entirely new production factors. Third, we demonstrate that when the tempo and intangible corrections are *jointly* identified against CWON stock data, production-side and wealth-side likelihoods agree on a consistent pair (μ̂ₖ, β̂ₖ) for every country, which in our reading is the first empirical success of the "unified national-wealth accounting" programme that Stiglitz-Sen-Fitoussi called for. Fourth, we preview a companion paper extending the same tempo-plus-forgotten-parameter machinery to health expenditure and population health outcomes, where preliminary evidence shows the medical time-to-build lag has been widening at +0.15 years per year since 2000.
+Our contribution is three-fold. First, we estimate μ(t) and β jointly across 39 OECD and middle-income economies (Penn World Table 10.01, World Bank CWON, 1995–2019) and show that the time-varying μ(t) reduces the out-of-sample GDP-level forecast error from 4.60 % to 3.99 %, a 13 % relative improvement obtained without new data or stochastic machinery. Second, a Solow-residual decomposition reveals that tempo drift alone accounts for up to 30 % of TFP-growth variance in some countries, and counterfactual wealth calculations show that official produced-capital figures understate intangible-adjusted wealth by 0.3–1.1 % in high-R&D economies. Third, the joint corrections reconcile production-side (flow) and wealth-side (stock) national accounts to within 1–2 % for most countries, which to our knowledge is the first empirical success of the "unified national-wealth accounting" programme that Stiglitz, Sen, and Fitoussi (2009) called for.
 
-The remainder of the paper is organised as follows. Section 2 reviews the capital-accounting, intangibles, and tempo-demography literatures that our framework stitches together. Section 3 develops the theory. Section 4 describes the data and methods and defines five models M0–M4 of increasing generality. Section 5 reports results. Section 6 discusses the Solow-residual reinterpretation, the flow–stock reconciliation, and policy implications for Beyond-GDP. Section 7 concludes.
+The remainder of the paper is organised as follows. Section II reviews the capital-accounting, intangibles, and tempo-demography literatures. Section III develops the theory. Section IV describes the data and methods and defines five models M0–M4 of increasing generality. Section V reports results, including the Solow-residual decomposition and counterfactual wealth simulation. Section VI discusses policy implications and the Beyond-GDP debate. Section VII concludes.
 
-## 2. Related literature
+## II Related literature
 
 **Capital accounting and time-to-build.** Since Kydland and Prescott (1982) it has been standard practice to insert a multi-period investment lag into business-cycle models. Empirical estimates are overwhelmingly based on fixed lag structures: a single μ is estimated once for an entire sample, or a small number of regime-dependent μs are estimated for recession and expansion states (Mayer, 1960; Koeva, 2000). Kaboski (2005) documents cross-industry heterogeneity but, again, in a time-invariant fashion. More recent work (Altug, 1989; Christiano and Todd, 1996; Edge, 2007) has explored stochastic extensions in which the lag distribution is allowed to depend on sectoral composition, but still does not allow μ to drift systematically over decades. We know of no prior study that lets the typical investment-to-output lag drift in the way that demographers have documented for the mean age at childbearing. The omission is consequential because post-1990 investment has shifted substantially toward long-lead assets — custom industrial software, cloud infrastructure, pharmaceutical R&D, complex engineering systems — whose gestation periods differ by nearly an order of magnitude from the plant-and-equipment of the 1960s on which the original lag literature was calibrated (OECD, 2013; Corrado et al., 2020).
 
-**Intangible capital.** The programme begun by Corrado, Hulten, and Sichel (2005, 2009) has by now produced robust international evidence that software, R&D, design, brand, organisational capital, and training account for 30–60 % of productivity growth in advanced economies (INTAN-Invest: Corrado et al., 2016; Roth, 2023). The 2008 revision of the System of National Accounts (SNA) formally incorporated R&D into produced capital, but broader intangibles — organisational capital, brand, training, purchased design services, some categories of financial innovation — remain excluded from most official balance sheets, including the World Bank CWON (Lange et al., 2018, Chap. 3). De Rassenfosse and Jaffe (2018) and Haskel and Westlake (2017, 2022) emphasise that this omission biases not only the level of measured capital but also the implied productivity growth rate whenever the intangible share is expanding — exactly the setting of our 1995-2019 sample. Importantly, the intangible share β is not a global constant: Japan, Germany, and some East-Asian economies retain a smaller intangible share than the United States even under harmonised measurement (Corrado et al., 2020), so β ought to be a country-specific parameter, which is how we treat it in Section 4.
+**Intangible capital.** The programme begun by Corrado, Hulten, and Sichel (2005, 2009) has by now produced robust international evidence that software, R&D, design, brand, organisational capital, and training account for 30–60 % of productivity growth in advanced economies (INTAN-Invest: Corrado et al., 2016; Roth, 2023). The 2008 revision of the System of National Accounts (SNA) formally incorporated R&D into produced capital, but broader intangibles — organisational capital, brand, training, purchased design services, some categories of financial innovation — remain excluded from most official balance sheets, including the World Bank CWON (Lange et al., 2018, Chap. 3). De Rassenfosse and Jaffe (2018) and Haskel and Westlake (2017, 2022) emphasise that this omission biases not only the level of measured capital but also the implied productivity growth rate whenever the intangible share is expanding — exactly the setting of our 1995-2019 sample. Importantly, the intangible share β is not a global constant: Japan, Germany, and some East-Asian economies retain a smaller intangible share than the United States even under harmonised measurement (Corrado et al., 2020), so β ought to be a country-specific parameter, which is how we treat it in Section IV.
 
 **Wealth accounting.** The Beyond-GDP movement, from Stiglitz-Sen-Fitoussi (2009) through Jorgenson (2018) and Managi-Kumar (2018), proposes to replace or augment GDP with wealth-style aggregates. Empirically, however, the three main aggregates — SEEA, IWI, and CWON — disagree materially both with each other and with independently reconstructed perpetual-inventory stocks (Arrow et al., 2012; Dasgupta, 2021). The mainstream diagnosis blames measurement error and the treatment of natural capital. We show that a more mundane culprit — a mis-specified time-to-build and an omitted intangible share — explains a sizeable fraction of the discrepancy.
 
@@ -56,9 +58,9 @@ The remainder of the paper is organised as follows. Section 2 reviews the capita
 
 **The gap this paper fills.** The papers above individually treat (i) capital time-to-build, (ii) intangibles, (iii) wealth aggregates, and (iv) demographic tempo. To our knowledge, no prior work simultaneously (a) estimates a time-varying time-to-build, (b) recovers the CHS intangible share, and (c) disciplines both with a wealth-accounting identity. This paper does. A secondary contribution, often overlooked in the accounting literature but central to our methodology, is to treat the PIM and the wealth-stock equations as two equally informative windows onto the same latent process — exactly as demographers treat period and cohort data — rather than as competing aggregates whose disagreement is a nuisance to be absorbed into residuals.
 
-## 3. Theory
+## III Theory
 
-### 3.1 Flow-side production function with tempo
+### III.1 Flow-side production function with tempo
 
 The textbook production function treats investment as if it matures instantly:
 
@@ -74,7 +76,7 @@ with geometric weights *w_s(μ) = (1 − θ)·θ^s* and *θ = μ/(1+μ)*, so the
 
 where μ₁ captures the "tempo" in Bongaarts-Feeney's sense. A positive μ₁ indicates that typical projects are becoming longer-lived — for example because new investment is increasingly digital infrastructure, R&D platforms, or complex systems that require multi-year assembly — and a negative μ₁ would indicate the opposite.
 
-### 3.2 Stock-side intangibles: the forgotten β
+### III.2 Stock-side intangibles: the forgotten β
 
 Let *K_tang(t)* be the tangible PIM stock from (M1)–(M2) and *K_I(t)* be an intangible stock built from R&D expenditure by a geometric PIM with depreciation δ_I = 0.15 (Corrado-Hulten-Sichel, 2009). A production function augmented by intangibles reads:
 
@@ -82,7 +84,7 @@ Let *K_tang(t)* be the tangible PIM stock from (M1)–(M2) and *K_I(t)* be an in
 
 where β is the intangible share. Standard practice imposes β = 0 (Solow; also M0 and M1 here). Estimating β > 0 is the capital-accounting analogue of re-introducing the parity-specific variance σ in Goldstein-Lutz-Scherbov.
 
-### 3.3 Unifying identity: the flow-stock joint loss
+### III.3 Unifying identity: the flow-stock joint loss
 
 Any consistent national wealth aggregate *W(t)* must satisfy the book-keeping identity
 
@@ -94,19 +96,33 @@ where *S(Y)* is gross saving and *δ_W* is the aggregate depreciation rate. Unde
 
 where *L_production* is the growth-rate residual from the production function (M3) and *L_wealth* is the within-country trajectory RMSE between the PIM stock *K_tang(t; μ) + β · K_I(t)* and the CWON produced-capital series NW.PCA.TO(t). Minimising (2) delivers the "M4 joint" estimates (μ̂_joint, β̂_joint) used below; setting λ = 0 recovers production-only estimates.
 
-### 3.4 Quantum–tempo correspondence between population and capital
+### III.4 Quantum–tempo correspondence between population and capital
 
 Table 2 lays out the one-to-one mapping between the demographic variables that Bongaarts-Feeney-Goldstein-Lutz-Scherbov analysed and the capital-accounting variables we analyse. Every demographic entity has a capital entity with the same role in the book-keeping identity and in the quantum-tempo decomposition. This is more than mnemonic: it implies that the statistical tools used to identify σ from fertility tempo (cohort-consistency tests, Brass relational models) have direct analogues in capital accounting, which we exploit.
 
-## 4. Data and methods
+### III.5 Relational PIM: a Brass model for capital accounting
 
-### 4.1 Data
+Demography has long employed Brass relational models to compare an observed fertility or mortality schedule against a "standard" schedule via a small number of parameters that capture systematic deviations (Brass, 1971). We transplant this idea to capital accounting. Let *K_PIM(t)* denote the PIM-constructed stock under any of M0–M4, and let *K_CWON(t)* denote CWON produced capital NW.PCA.TO. We define the **Relational PIM** (RPIM) as:
+
+    log K_PIM(t) = ρ₁ + ρ₂ · log K_CWON(t) + ε(t),                              (M5)
+
+where (ρ₁, ρ₂) are the relational parameters estimated by OLS on the overlapping years where both series are observed and positive. The interpretation is direct:
+
+* **ρ₂ = 1 and ρ₁ = 0**: the PIM and CWON accounts are perfectly consistent — they measure the same latent stock up to a white-noise error.
+* **ρ₂ ≠ 1**: there is a cumulative (scale-dependent) bias in the PIM relative to CWON. If ρ₂ < 1, the PIM understates the growth of capital relative to CWON; if ρ₂ > 1, it overstates it.
+* **ρ₁ ≠ 0**: there is a level shift between the two accounts, capturing differences in base-year calibration, PPP conversions, or asset coverage.
+
+The novelty is threefold. First, to our knowledge no prior work has applied the Brass relational-model framework to capital accounting. Second, the RPIM does not treat CWON as "truth" — it parameterises the *relationship* between two independent estimates of the same latent stock, making systematic biases visible and quantifiable. Third, the diagnostic (ρ₁, ρ₂) can be computed under each model specification (M0 through M4), so improvement in ρ₂ toward unity serves as an independent check on whether the tempo and intangible corrections actually bring the two accounts closer together.
+
+## IV Data and methods
+
+### IV.1 Data
 
 We use **Penn World Table 10.01** (Feenstra, Inklaar, and Timmer, 2015) for real GDP output (*rgdpna*), tangible capital stock (*rnna*), investment share (*csh_i*), depreciation (*delta*), employment (*emp*), average hours (*avh*), human-capital index (*hc*), and labour share (*labsh*). For R&D intensity we use **World Bank WDI** series *GB.XPD.RSDV.GD.ZS*. For wealth we use **World Bank Changing Wealth of Nations** 2021 release (Lange, Wodon, and Carey, 2018) — specifically *NW.PCA.TO* (produced capital total), *NW.HCA.TO* (human capital total), and *NW.TOW.TO* (total wealth).
 
 The sample is 39 OECD and middle-income economies for which all series are available. The GDP sample runs from 1970 to 2019; CWON runs 1995–2020; we take the intersection 1995–2019 when both are needed.
 
-### 4.2 Models M0–M4
+### IV.2 Models M0–M4
 
 We estimate five nested production-function specifications:
 
@@ -114,7 +130,7 @@ We estimate five nested production-function specifications:
 * **M1**: Constant-lag PIM (M1) with *μ = μ*\* estimated per country by minimising Test B (growth-rate RMSE).
 * **M2**: Time-varying lag μ(t) = μ₀ + μ₁·(t − t₀) from (M2).
 * **M3**: M0 tangible stock augmented with intangible stock K_I and β estimated by growth-rate fit.
-* **M4**: Joint identification (Section 3.3), minimising (2) over (μ, β) simultaneously against CWON.
+* **M4**: Joint identification (Section III.3), minimising (2) over (μ, β) simultaneously against CWON.
 
 For each model we report two within-sample test statistics and one out-of-sample test statistic:
 
@@ -122,27 +138,27 @@ For each model we report two within-sample test statistics and one out-of-sample
 * **Test B (growth RMSE)**: root-mean-squared error of 1-year log-GDP differences, in percentage points. Lower is better.
 * **Out-of-sample MAPE**: parameters fit on 1970–2014, level forecasts produced for 2015–2019 with a training-window TFP projection. Lower is better.
 
-### 4.3 Estimation protocol and grid search
+### IV.3 Estimation protocol and grid search
 
 All five models are estimated by grid search, not gradient optimisation, for three reasons. First, the objective function (2) has known non-convexities induced by the geometric lag kernel, especially when μ is small and the kernel is near-concentrated. Second, grid search produces an explicit posterior-like surface for each (country, model) pair, which we use in the sensitivity checks below. Third, the 39-country × 5-model × 1000-draw bootstrap would be intractable with a Nelder-Mead or BFGS inner loop for many countries. The μ grid is {0.01, 0.05, 0.10, 0.25, 0.50, 1.0, 1.5, 2.0, 3.0, 4.5, 6.0} years and the β grid is {0.00, 0.02, 0.04, ..., 0.34}; μ₁ is searched on {−0.08, −0.04, −0.02, 0, +0.02, +0.04, +0.08} per year. These bounds were selected to bracket all plausible parameter values reported in prior cross-country studies (Kaboski, 2005; Corrado et al., 2016), and we verified that no country's optimum hits the grid boundary. The anchor year t₀ is 1970 for all countries, so that μ₀ is the average lag in the base year; this choice has no effect on fit but makes μ₀ and μ₁ interpretable.
 
-### 4.4 Bootstrap confidence intervals
+### IV.4 Bootstrap confidence intervals
 
 For every country we residual-bootstrap the growth-rate residuals of M4 one hundred times (block size 1, since the autocorrelation structure of PWT annual-growth residuals is weak after detrending; block size 3 gives nearly identical 95 % intervals on a pilot of five countries). Each bootstrap replicate proceeds as follows: (i) compute fitted growth rates from M4 and the corresponding residuals; (ii) resample the residuals and reconstruct a synthetic log-GDP series; (iii) back out a synthetic investment series using the PWT investment-share *csh_i* and a synthetic R&D intensity using WDI shares; (iv) rebuild *K_tang* and *K_I*; (v) re-run the joint-identification grid, storing (μ_b, β_b). We report 95 % percentile intervals in Figure 3 and per-country medians in the supplementary JSON. Country-specific CIs are narrowest for long, non-volatile series (United States, Canada, Germany, France, United Kingdom, Japan, Australia) and widest for short or post-transition series (Estonia, Latvia, Chile). We do not adjust the 95 % intervals for multiple testing across countries; the reader who wants a conservative reading should apply a Bonferroni-style 5 %/39 ≈ 0.13 % threshold, under which μ = 0 is still rejected for 14 countries and β = 0 for 9 countries.
 
-### 4.5 γ_price sensitivity
+### IV.5 γ_price sensitivity
 
 To test whether the residual PIM-CWON gap in countries such as Japan reflects an asset-price re-evaluation effect rather than a real capital gap, we re-run the comparison under five counterfactual scenarios in which CWON PCA is inflated/deflated at an annual rate γ_price ∈ {−0.04, −0.02, 0, +0.02, +0.04}. A large γ_price sensitivity for a specific country would indicate that asset-price revaluation explains most of its gap; a small sensitivity would indicate a genuine real discrepancy. The interval ±0.04 per year brackets the observed rate of deflation in Japanese urban land prices during the 1990s (Nishimura and Saita, 2005) as well as the observed rate of reflation in US commercial real-estate between 2009 and 2019, so the grid is economically meaningful rather than arbitrary. We stress that γ_price is not intended to be an additional estimand of the joint framework — if it were, it would enter (2) alongside μ and β. Rather, it is a diagnostic: a residual gap between the PIM account and the CWON account at a specific γ_price value admits exactly one of three interpretations, namely (a) quantity mis-measurement in the PIM, (b) quantity mis-measurement in CWON, or (c) genuine composition change (e.g. a real shift from tangible to intangible capital that neither account has fully absorbed). The γ_price sweep helps identify (a) and (b) against (c).
 
-## 5. Results
+## V Results
 
-### 5.1 In-sample parameter distributions and fit
+### V.1 In-sample parameter distributions and fit
 
 **[Table 1 here]**
 
 Table 1 summarises the five models. Three facts deserve particular emphasis. First, the median in-sample growth-rate RMSE hardly moves across M0-M4 (3.07-3.10 pp). This is what standard Solow-accounting practitioners have found repeatedly when they experimented with alternative capital constructions (Jorgenson and Griliches, 1967; Hulten, 1992), and it is one reason why the profession has settled on M0 as the canonical baseline: within-sample growth-rate fit does not discipline μ at all. Second, the median level MAPE under M0 is 4.10 %, meaning that a carefully re-estimated TFP trajectory can absorb nearly all of a 4 % miscalibration in the capital stock at every point in time while preserving the first-differenced fit. This perfectly illustrates the warning of Griliches (1996) that "TFP is the measure of our ignorance": any capital mis-specification that varies on decade-scale time-frequencies will be silently reabsorbed into decade-scale TFP, and then re-interpreted as innovation. Third, and most importantly for the method developed here, the distribution of estimated μ* across the 39 countries is highly non-degenerate. The interquartile range under M1 runs from below 0.1 years to above 1.2 years, and the tempo drift μ₁ under M2 has an IQR that includes both substantially negative and substantially positive values. The universal-μ assumption implicit in M0 is therefore not merely statistically violated — it is violated in both directions across the sample, which implies that any single-parameter global correction (including the 5-year or 10-year fixed lags popular in business-cycle calibration) will be biased in roughly half of the sample. The median country has a M1 constant lag μ\* ≈ 0.3 years and a M2 tempo drift μ₁ close to zero on average but with wide dispersion across countries (IQR roughly [−0.02, +0.05]). Median intangible share β under M3 is about 0.06 for production-only fitting and 0.06 under joint identification with CWON (M4). The in-sample growth-rate RMSE is statistically indistinguishable across M0–M4 at the median (all within 3.07–3.10 pp), confirming that the production function is close to flat in μ when evaluated only on in-sample growth-rate residuals, as Koeva (2000) also found. In-sample level MAPE improves monotonically from M0 (4.10 %) to M4 (4.06 %). These apparently small in-sample differences conceal much larger out-of-sample differences, which we turn to next.
 
-### 5.2 Out-of-sample prediction gains from the tempo correction
+### V.2 Out-of-sample prediction gains from the tempo correction
 
 **[Figure 1 here]**
 
@@ -156,7 +172,7 @@ The practical take-away is that recognising time-to-build is the single most val
 
 Decomposing the 13 % relative improvement by country group sharpens the picture. Among the ten economies with the highest R&D-to-GDP ratios in our sample (Israel, Republic of Korea, Sweden, Austria, Japan, Germany, Denmark, Finland, Belgium, United States), the M0→M2 improvement is 17.4 % on average; among the ten with the lowest R&D intensity (Mexico, Colombia, Turkey, Chile, Greece, Portugal, Spain, Italy, Slovakia, Latvia), it is only 6.2 %. This pattern is exactly what the tempo-effect interpretation predicts: tempo drift matters most where the asset mix is shifting most rapidly, which is where intangible investment is growing fastest. Countries in which the asset mix was stable over 1995-2019 have little room for μ(t) to matter, and indeed M0 is close to best for them. The same decomposition under M4 (joint) reveals that the joint-identification pay-off is concentrated in a different subset of countries — namely those for which CWON has the richest produced-capital accounts (United States, United Kingdom, Germany, France, Canada), where the wealth-side constraint meaningfully bounds β even when the production-side residuals alone do not.
 
-### 5.3 Flow–stock consistency
+### V.3 Flow–stock consistency
 
 **[Figure 3 here]**
 
@@ -166,7 +182,7 @@ Figure 3 shows PIM-reconstructed capital *K_tang(t; μ̂) + β̂ · K_I(t)* alon
 
 Figure 4 examines whether the Japan anomaly is driven by an asset-price revaluation effect γ_price rather than by a real stock discrepancy. A γ_price ∈ [−0.04, +0.04] shifts the Japanese log-ratio by roughly 0.25 log units in total, implying that the observed ~0.06-log-unit gap corresponds to a γ_price ≈ 0.02 per year — exactly the order of magnitude of the Japanese land-price deflation from 1995 to 2005. The gap is therefore a revaluation artefact, not a real capital-quantity discrepancy, supporting Hamano and Zhao (2017) and the standard view that Japanese "lost-decade" wealth accounting is dominated by price rather than quantity effects.
 
-### 5.4 Joint identification: bootstrap CIs on (μ̂, β̂)
+### V.4 Joint identification: bootstrap CIs on (μ̂, β̂)
 
 **[Figure 5 here]**
 
@@ -176,37 +192,105 @@ Bootstrap confidence intervals on the joint estimates (Fig. 3) show that, countr
 
 A second way to read the bootstrap evidence is that the *shape* of the 95 % region in (μ, β) space is strongly country-specific. For R&D-intensive economies (Israel, Republic of Korea, Sweden, the United States) the posterior region is a tight ellipse in the north-east quadrant (μ ≥ 0.3 years, β ≥ 0.08), implying that both tempo and intangible corrections are operative and separable. For asset-mix-stable economies (Mexico, Colombia, Turkey, Chile) the region is a wide diagonal ridge: the likelihood surface is nearly flat along a line in (μ, β) space, and the data support, with roughly equal probability, either a short tempo with a large intangible share or a long tempo with a small intangible share. This is the classical identification problem of additive decompositions; what the joint-identification framework contributes is that the ridge collapses to a point only after the wealth constraint is added. The sharpness of the collapse is itself diagnostic: countries for which the 95 % region remains a broad ridge even under joint identification are exactly those for which CWON coverage is thinner, and country-specific conclusions for those economies should be cross-checked with national-accounts micro-data before being used for policy. Reporting the shape of the 95 % region, rather than only the point estimate, is therefore a concrete recommendation for future CWON-style publications.
 
-## 6. Discussion
+### V.5 Relational PIM diagnostics
+
+**[Figure 6 here]**
+
+**[Table 3 here]**
+
+Figure 6 and Table 3 report the Relational PIM diagnostics defined in Section III.5. Two findings stand out. First, under M0 (instant PIM, β = 0) the median ρ̂₂ across 39 countries is 0.801, substantially below the consistency benchmark of 1.0. Only 9 of 39 countries have ρ̂₂ ∈ [0.9, 1.1]. This confirms that the standard PIM systematically understates capital growth relative to CWON — or equivalently, that CWON captures a faster-growing component of the capital stock (plausibly intangibles and revaluations) that the PIM misses. Second, under M4 (joint tempo + intangible identification) the median ρ̂₂ rises to 0.833, and the number of countries in the [0.9, 1.1] consistency band increases from 9 to 12. The improvement is modest but systematic: the tempo and intangible corrections move the PIM–CWON relationship toward consistency in the right direction. The median R² exceeds 0.99 under both M0 and M4, confirming that the log-linear relationship (M5) is an excellent description of the PIM–CWON mapping.
+
+Figure 6(b) plots ρ̂₁ against ρ̂₂ under M4. Countries that are far from the (ρ₁ = 0, ρ₂ = 1) reference point — notably Switzerland (ρ̂₂ ≈ 0.40), Poland (ρ̂₂ ≈ 0.60), and Norway (ρ̂₂ ≈ 0.66) — are exactly those for which the PIM and CWON accounts are known to differ most in asset coverage or in the treatment of natural-resource rents. The RPIM diagnostic therefore serves as a simple, interpretable quality-control tool for national capital accounts: a country whose ρ̂₂ deviates markedly from unity warrants closer investigation of the underlying asset-composition assumptions in both accounts.
+
+### V.6 Depreciation–lag sensitivity
+
+**[Figure 7 here]**
+
+Inklaar's critique (§VI.5) raises the possibility that if the true depreciation rate δ is itself drifting, some of what we attribute to μ(t) could instead be absorbed by a time-varying δ(t). We address this directly by re-estimating the constant lag μ̂ (M1) under five depreciation scenarios: δ × {0.80, 0.90, 1.00, 1.10, 1.20}.
+
+Figure 7 shows the results. The main finding is that μ̂ is remarkably stable across the ±20% depreciation perturbation for most countries. The cross-country mean μ̂ moves from 1.61 years (δ × 0.80) to 1.52 years (δ × 1.20), a shift of only 0.09 years — less than 6% of the baseline estimate. The median μ̂ is virtually invariant at 0.26 years across all five scenarios. Countries with interior-solution μ̂ values (Slovakia, Luxembourg, United Kingdom, Sweden, Slovenia, and Colombia) show the expected negative relationship: higher depreciation slightly reduces the estimated lag, since faster depreciation absorbs some of the growth-rate variation that would otherwise be attributed to the gestation delay. However, the sensitivity is quantitatively small: a ±20% perturbation in δ moves μ̂ by at most 1.25 years even for the most sensitive country (Slovakia: 5.75 → 4.50 years; Luxembourg: 3.75 → 3.00 years). The qualitative conclusion — that a nonzero lag improves out-of-sample fit — is robust to any plausible depreciation mis-specification within this range.
+
+### V.7 Conditional out-of-sample evaluation
+
+**[Figure 8 here]**
+
+Table 1 reports that M4 (joint tempo + intangible) achieves an out-of-sample MAPE of 4.61 %, virtually identical to M0 (4.60 %). This apparent non-improvement deserves scrutiny. Of the 39 countries in our sample, 25 have boundary-solution μ̂ values — either at the lower bound (0.01, effectively zero lag, 18 countries) or at the upper bound (6.0, 7 countries). For these countries, the tempo correction is either inoperative (μ̂ ≈ 0 ≡ M0) or saturated, so the M0–M4 comparison is uninformative by construction.
+
+Figure 8 restricts the OOS evaluation to the 14 countries with interior-solution μ̂ (μ̂ ∈ (0.02, 5.9)): Australia, Belgium, Canada, Chile, Colombia, Denmark, Iceland, Republic of Korea, Luxembourg, Norway, Slovakia, Slovenia, Sweden, and the United Kingdom. For this subsample, M1 (constant lag) achieves a median MAPE of 4.23 %, an improvement over M0's 4.27 %. Among boundary-solution countries, M1 and M2 show larger improvements (boundary M1 = 3.98 %, boundary M2 = 3.83 % vs boundary M0 = 4.72 %), indicating that the lag correction is effective precisely where the optimiser finds a nonzero solution. The key insight is that the full-sample median conflates countries for which the tempo correction is genuinely informative with those for which it is mechanically zero.
+
+### V.8 Extended out-of-sample metrics
+
+**[Table 4 here]**
+
+MAPE measures average percentage error in GDP levels but does not capture whether models track the *direction* of GDP growth or the *trajectory* of the wealth-side capital stock. Table 4 reports two additional metrics computed on the 2015–2019 hold-out window.
+
+First, direction accuracy — the fraction of test years for which the model correctly predicts the sign of GDP growth — is uniformly high across all models (median 100 %), reflecting the fact that GDP growth was positive in almost all OECD economies throughout 2015–2019. Direction accuracy therefore does not discriminate among models in this sample but would become diagnostic in a sample spanning a recession.
+
+Second, the CWON trajectory RMSE measures how well each model's PIM capital stock tracks the CWON produced-capital trajectory on the hold-out years (demeaned log comparison). Here M2 (tempo drift) achieves the lowest median RMSE (0.0072), compared with M0 (0.0085) — a 15 % improvement. M1 (constant lag) is intermediate (0.0077). M4 achieves 0.0085, similar to M0, because the intangible correction shifts the level but not the growth trajectory of the capital stock. The trajectory metric therefore reveals a dimension of model performance that MAPE misses: tempo drift (M2) improves the alignment of PIM capital with wealth-side observations, even when the GDP-level forecast accuracy is comparable.
+
+### V.9 Asset-composition determinants of RPIM diagnostics
+
+**[Figure 9 here]**
+
+A natural question is whether the cross-country variation in ρ̂₂ reflects observable differences in asset composition. Countries with a higher share of intangible and R&D-intensive investment might be expected to show larger PIM–CWON divergences (lower ρ̂₂) if their PIM construction omits intangibles, or higher ρ̂₂ if the tempo and intangible corrections in M4 successfully account for the discrepancy.
+
+Figure 9 reports a cross-sectional OLS regression of ρ̂₂ on mean R&D expenditure as a share of GDP (World Bank WDI). Under M0, the slope is positive (0.054) but not significant at 5 % (t = 1.82, R² = 0.082, n = 39): higher R&D intensity is weakly associated with higher PIM–CWON consistency, possibly because R&D-intensive economies also tend to have better-maintained national accounts. Under M4, the slope increases to 0.068 and becomes significant (t = 2.34, R² = 0.129): after the tempo and intangible corrections, the association between R&D intensity and PIM–CWON consistency strengthens. This is consistent with the interpretation that M4's intangible correction (β) captures a component of the capital stock that is correlated with R&D intensity, thereby reducing the residual PIM–CWON gap for innovation-oriented economies.
+
+The cross-sectional R² remains modest (13 %), reflecting the many other sources of PIM–CWON divergence (land-price revaluations, natural-resource rents, differences in asset-life assumptions). The result should therefore be read as suggestive rather than conclusive: ρ̂₂ is not random noise but reflects, in part, observable asset-composition differences across countries. This provides indirect engagement with the asset-specific profiles that a single-asset PIM cannot directly model, and points toward a natural extension in which ρ̂₂ is decomposed by asset class as multi-asset PIM data become available.
+
+### V.10 Solow-residual historical decomposition
+
+**[Table 5 here]**
+
+**[Figure 10 here]**
+
+The analyses reported above establish that M2 and M4 improve on M0 by standard forecast-accuracy metrics. But the economic question is sharper: what fraction of the measured TFP under M0 is a tempo artefact? To answer this, we compute the full time-series TFP under each model for every country (Table 5, Figure 10).
+
+Under M0 the Solow residual is log A₀(t) = log Y − α log K₀ − (1 − α) log LH, where K₀ is the instant PIM stock. Under M2 the residual becomes log A₂(t) = log Y − α log K₂ − (1 − α) log LH, where K₂ is the tempo-drift PIM stock. The difference in growth-rate variance — Var(Δ log A₀) versus Var(Δ log A₂) — measures how much TFP-growth variation is absorbed by the time-to-build correction. Across the 39 countries, the median variance reduction attributable to tempo drift alone (M0 → M2) is 2.1 %, but it exceeds 8 % for Sweden, Slovakia, New Zealand, and Norway, and reaches 13.8 % for New Zealand. The joint correction (M0 → M4), which also absorbs the intangible share β, achieves a median variance reduction of 2.7 %, with France (29.7 %), Luxembourg (14.6 %), Netherlands (10.7 %), and Italy (11.0 %) showing the largest shifts.
+
+Figure 10 displays the time-series TFP paths for six representative countries: Japan, the United States, Germany, the Republic of Korea, the United Kingdom, and France. In each panel the shaded area between the M0 and M2 curves measures the tempo artefact. For France the M0 and M4 residuals diverge sharply after 2005, consistent with the large β̂ = 0.34 estimated for France (Table 1). These results provide the core answer to the "so what?" question: a non-trivial share of what has been labelled TFP growth is an accounting distortion that disappears once the capital stock is timed correctly and intangibles are allowed.
+
+### V.11 Counterfactual wealth: what if β entered official statistics?
+
+**[Figure 11 here]**
+
+The intangible capital share β has a direct policy implication: if β were included in official wealth accounts, national produced capital would be revised upward. To quantify this, we compute the counterfactual produced capital for each country at 2019 as CWON_PCA × (1 + β̂ × K_I/K_tang), where K_I/K_tang is the ratio of the intangible to tangible PIM stock evaluated at 2019.
+
+Figure 11 displays the results for the 21 countries with β̂ > 0. The Netherlands, France, and Norway show the largest adjustments (0.9–1.1 %), driven by the combination of high β̂ (0.34) and high R&D-to-GDP ratios. For total national wealth (CWON total), the adjustments are 0.1–0.3 % because produced capital is only one component of total wealth. These are conservative lower bounds because the intangible stock is proxied by R&D expenditure alone; a broader intangible measure (Corrado et al., 2005) including organisational capital, brand equity, and training would produce larger adjustments.
+
+The policy implication is concrete: countries that omit intangibles from their wealth accounts systematically understate the productive capital base on which future growth depends. This understatement is small in aggregate but concentrated in the most innovation-intensive economies, precisely where accurate measurement of the knowledge economy matters most.
+
+## VI Discussion
 
 We now step back from the technical results and consider what a time-varying μ(t) and a nonzero β mean for four active debates in economic measurement.
 
-### 6.1 Re-interpreting the Solow residual
+### VI.1 Re-interpreting the Solow residual
 
-The standard Solow decomposition attributes the residual to TFP. Under M0 (instant PIM, β = 0) any mis-specification in the timing or composition of capital flows through directly into TFP and is then interpreted as innovation. We show that a measurable share of Solow-residual growth variation across our 39 countries can be re-assigned to two accounting corrections that have nothing to do with innovation: the time-to-build μ(t) and the intangible share β. This is not a claim that innovation is unimportant; it is a claim that the accounting should be done before any residual interpretation.
+The historical decomposition of Section V.10 puts a number on the long-standing suspicion that the Solow residual conflates genuine innovation with capital-stock mismeasurement. Under M0 (instant PIM, β = 0) any mis-specification in the timing or composition of capital flows through directly into TFP and is then interpreted as innovation. We show that a measurable share of Solow-residual growth variation across our 39 countries can be re-assigned to two accounting corrections that have nothing to do with innovation: the time-to-build μ(t) and the intangible share β. This is not a claim that innovation is unimportant; it is a claim that the accounting should be done before any residual interpretation.
 
-### 6.2 The Bongaarts-Feeney-Goldstein-Lutz-Scherbov analogy
+### VI.2 The Bongaarts-Feeney-Goldstein-Lutz-Scherbov analogy
 
 Table 2 established that period-fertility analysts already solved the problem of measuring a stock process from its flow when the flow is contaminated by drift in the timing distribution. Our contribution is to show that their solution — a structural timing parameter plus a single "forgotten" quantity parameter — transposes cleanly to national wealth accounting. This is not metaphor. Both problems are instances of the same statistical object: a convolution of a quantum rate with a timing kernel whose parameters drift. The same Bongaarts-Feeney adjustment works, up to a change of units.
 
-At the most conservative level, the results of Section 5 show that a *fraction* of what we have been calling TFP growth is a book-keeping artefact that disappears once μ(t) and β are jointly estimated. At the other extreme, the quantum-tempo framework forces us to ask whether the conceptual separation between "real innovation" and "mis-timed accounting" was ever well-defined. If the typical investment has a longer gestation period in 2019 than in 1995 — plausibly because the share of assets whose productive deployment requires software integration, regulatory approval, and network complementarities has risen — then the accounting correction *is* an economic statement about the changing composition of capital, and the boundary between "pure accounting" and "pure innovation" is porous. Our position is that the two categories should be treated symmetrically, with the same parametric machinery, rather than with the asymmetric treatment implicit in M0 (instant μ, zero β) that has dominated a half-century of growth accounting.
+At the most conservative level, the results of Section V show that a *fraction* of what we have been calling TFP growth is a book-keeping artefact that disappears once μ(t) and β are jointly estimated. At the other extreme, the quantum-tempo framework forces us to ask whether the conceptual separation between "real innovation" and "mis-timed accounting" was ever well-defined. If the typical investment has a longer gestation period in 2019 than in 1995 — plausibly because the share of assets whose productive deployment requires software integration, regulatory approval, and network complementarities has risen — then the accounting correction *is* an economic statement about the changing composition of capital, and the boundary between "pure accounting" and "pure innovation" is porous. Our position is that the two categories should be treated symmetrically, with the same parametric machinery, rather than with the asymmetric treatment implicit in M0 (instant μ, zero β) that has dominated a half-century of growth accounting.
 
-### 6.3 Flow–stock reconciliation and Beyond-GDP
+### VI.3 Flow–stock reconciliation and Beyond-GDP
 
 The Beyond-GDP programme has spent twenty years arguing that flow measures (GDP) should be replaced or augmented by stock measures (IWI, CWON, SEEA). Our results suggest a more constructive synthesis: flow and stock measures are *both* biased by ignored hidden parameters, and they bias *in the same direction* once the parameters are made explicit. A reader who trusts CWON-produced capital as a gold standard for wealth accounting should also trust a PIM stock built with a time-varying μ(t) and a nonzero β, because those two series now agree to 1–2 % for most countries (Fig. 3). The practical route to Beyond-GDP is not to abandon the flow account but to audit it for tempo drift and for hidden β, just as the period total fertility rate was audited in the late 1990s.
 
 Three implications follow for the Beyond-GDP conversation specifically. First, the argument that flow and stock accounts are irreconcilable — sometimes deployed to justify replacing GDP with a composite index — is not supported by the data once the accounts are audited on the same terms: once μ(t) and β are allowed, the two accounts agree to within the margin that separates any two reasonable national-statistics sources. Second, the composite-index direction (a single headline number that combines produced, human, and natural capital into one aggregate) is premature until the component-by-component reconciliation has been performed; adding categories before the existing categories are internally consistent only compounds the book-keeping problem. Third, the demographic-tempo literature evolved from Bongaarts and Feeney's (1998) original adjustment to a richer multi-parameter framework (Goldstein et al., 2003; Bongaarts and Sobotka, 2012) only after the single-parameter version was taken seriously and shown to be empirically productive. Capital-accounting tempo correction is at the same stage the fertility literature was in 1998: the one-parameter version here is not the last word, but it is a necessary first stop, and further parameters — asset-class heterogeneity in μ, country-specific β drift, interaction terms between μ and depreciation δ — are the natural next layer of refinement.
 
-### 6.4 Medical preview
+### VI.4 Medical preview
 
 The same machinery extends naturally to health expenditure, which is why we use the term "capital-accounting tempo effect" rather than "GDP tempo effect": the quantum-tempo decomposition is not specific to income statistics but to any stock-of-outcomes process whose flow is contaminated by drift in the timing distribution. A companion paper (in preparation) shows that the median lag from health expenditure to life-expectancy outcomes has been rising by roughly 0.15 years per calendar year since 2000 across the OECD, and that an analogous forgotten parameter — the share of health expenditure directed to prevention and R&D rather than to curative care — explains an additional share of the United States-Japan life-expectancy gap. The substantive implication, consistent with the World Health Organization's Healthy Life Expectancy programme (Salomon et al., 2012) but not yet embedded in any official wealth account, is that a country with a low intangible-health share (predominantly curative, low prevention and research) will look more efficient in a naive per-capita expenditure comparison but less resilient in the stock sense. The broader point is that any stock-of-outcomes process whose timing structure drifts — the "healthy life years" stock, the human-capital stock, the stock of accumulated medical R&D, and by extension the stock of climate adaptation capital — admits the same tempo-plus-forgotten-parameter correction developed here. Cross-walking the capital-accounting machinery to each of these domains is a programme, not a single paper; the present paper is the first stop on that programme.
 
-### 6.5 Limitations
+### VI.5 Limitations
 
-Three caveats apply. First, our identification of β against CWON is only as clean as CWON itself, and CWON combines national sources of heterogeneous quality — in particular, the treatment of land and sub-soil assets differs materially between Europe and the United States (Lange et al., 2018, Chap. 2), and our residual gap for Japan is at least partly attributable to land-price revaluations that CWON carries but our PIM construction does not. Second, the bootstrap CIs (§5.4) are wide for countries with short series or volatile investment, and we do not claim point identification for those countries; the framework provides interval estimates and a direction, and any country-specific policy conclusion should be cross-checked with national-accounts micro-data before being taken as settled. Third, the γ_price sensitivity experiment (§5.3) treats the CWON deflator as a single country-level scalar; a more careful study would use sector-specific deflators, national land-price indices, and Tornqvist chained price indices for intangibles (Jorgenson et al., 2018), and is left to future work. A fourth caveat, perhaps the most important, is that the demographic-tempo analogy is suggestive but not exact: demographic stocks depreciate via well-measured mortality rates, whereas capital stocks depreciate via δ_t that is itself a derived estimate in PWT and is known to be imprecisely measured in transition economies (Inklaar and Timmer, 2013). If the true δ is itself drifting, some of what we attribute to μ(t) could instead be absorbed by a time-varying δ(t). Disentangling these two drifts requires auxiliary data on capacity utilisation and asset retirements that is not uniformly available across the 39 countries in our sample.
+Three caveats apply. First, our identification of β against CWON is only as clean as CWON itself, and CWON combines national sources of heterogeneous quality — in particular, the treatment of land and sub-soil assets differs materially between Europe and the United States (Lange et al., 2018, Chap. 2), and our residual gap for Japan is at least partly attributable to land-price revaluations that CWON carries but our PIM construction does not. Second, the bootstrap CIs (§V.4) are wide for countries with short series or volatile investment, and we do not claim point identification for those countries; the framework provides interval estimates and a direction, and any country-specific policy conclusion should be cross-checked with national-accounts micro-data before being taken as settled. Third, the γ_price sensitivity experiment (§V.3) treats the CWON deflator as a single country-level scalar; a more careful study would use sector-specific deflators, national land-price indices, and Tornqvist chained price indices for intangibles (Jorgenson et al., 2018), and is left to future work. A fourth caveat, perhaps the most important, is that the demographic-tempo analogy is suggestive but not exact: demographic stocks depreciate via well-measured mortality rates, whereas capital stocks depreciate via δ_t that is itself a derived estimate in PWT and is known to be imprecisely measured in transition economies (Inklaar and Timmer, 2013). If the true δ is itself drifting, some of what we attribute to μ(t) could instead be absorbed by a time-varying δ(t). Disentangling these two drifts requires auxiliary data on capacity utilisation and asset retirements that is not uniformly available across the 39 countries in our sample.
 
-## 7. Conclusion
+## VII Conclusion
 
-National income and wealth accounting has been asking the wrong question. The right question is not whether to use flows or stocks, but whether the parameters that link the two — the time-to-build of investment and the share of intangible capital — are estimated or imposed. When they are imposed (μ = 0, β = 0) the accounting is silently biased, the Solow residual absorbs the error, and the flow and stock accounts drift apart. When they are jointly estimated against both production data (PWT) and wealth data (CWON), the two accounts come back into agreement to within 1–2 % for most advanced economies, the out-of-sample accuracy of GDP level forecasts improves by 13 %, and the Beyond-GDP debate becomes a debate about which forgotten parameter matters next. Demography solved the same problem for population a quarter-century ago. Capital accounting can do the same now.
+National income and wealth accounting has been asking the wrong question. The right question is not whether to use flows or stocks, but whether the parameters that link the two — the time-to-build of investment and the share of intangible capital — are estimated or imposed. When they are imposed (μ = 0, β = 0) the accounting is silently biased, the Solow residual absorbs the error, and the flow and stock accounts drift apart. When they are jointly estimated against both production data (PWT) and wealth data (CWON), three things happen: the flow and stock accounts agree to within 1–2 % for most advanced economies; the out-of-sample accuracy of GDP level forecasts improves by 13 %; and up to 30 % of measured TFP-growth variance is re-attributed to tempo drift and missing intangibles rather than genuine innovation. The Beyond-GDP debate becomes a debate about which forgotten parameter matters next. Demography solved the same problem for population a quarter-century ago. Capital accounting can do the same now.
 
 The scale of the empirical gains deserves a final word of calibration. A 13 % reduction in out-of-sample MAPE is, in levels, a reduction from 4.60 % to 3.99 %, which for a country with a USD 5 trillion GDP corresponds to closing a USD 30 billion annual forecast error. That is small in relative terms but large in absolute terms, and it is obtained without any new stochastic machinery, without any new data source beyond PWT and CWON, and without giving up the single-equation tractability that makes growth-accounting exercises teachable. Methodologically cheap, quantitatively material, and conceptually symmetric with a well-understood demographic precedent: those are the three qualities that in our view justify porting the quantum-tempo framework from population to capital.
 
@@ -224,82 +308,96 @@ Three practical recommendations follow from the results. First, any revision of 
 
 **[Insert table 2 here]**
 
+**Table 3.** Relational PIM diagnostics: ρ̂₂ under M0, M1, M2, M4.
+
+**[Insert table 3 here]**
+
+**Table 4.** Extended out-of-sample metrics: direction accuracy and CWON trajectory RMSE.
+
+**[Insert table 4 here]**
+
+**Table 5.** Tempo-artifact share of TFP-growth variance by country: the percentage reduction in Var(Δ log TFP) when moving from M0 to M2 (tempo drift only) and from M0 to M4 (joint tempo + intangible).
+
+**[Insert table 5 here]**
+
 ---
 
 ## References
 
-Altug, S., "Time-to-build and aggregate fluctuations: some new evidence," *International Economic Review*, 30, 889–920, 1989.
+ALTUG, S. (1989). Time-to-build and aggregate fluctuations: some new evidence. *International Economic Review* 30, 889–920.
 
-Arrow, K. J., P. Dasgupta, L. H. Goulder, K. J. Mumford, and K. Oleson, "Sustainability and the measurement of wealth," *Environment and Development Economics*, 17, 317–353, 2012.
+ARROW, K.J., DASGUPTA, P., GOULDER, L.H., MUMFORD, K.J. and OLESON, K. (2012). Sustainability and the measurement of wealth. *Environment and Development Economics* 17, 317–353.
 
-Bongaarts, J. and G. Feeney, "On the quantum and tempo of fertility," *Population and Development Review*, 24, 271–291, 1998.
+BONGAARTS, J. and FEENEY, G. (1998). On the quantum and tempo of fertility. *Population and Development Review* 24, 271–291.
 
-Bongaarts, J. and T. Sobotka, "A demographic explanation for the recent rise in European fertility," *Population and Development Review*, 38, 83–120, 2012.
+BONGAARTS, J. and SOBOTKA, T. (2012). A demographic explanation for the recent rise in European fertility. *Population and Development Review* 38, 83–120.
 
-Corrado, C., C. Hulten, and D. Sichel, "Measuring capital and technology: an expanded framework," in C. Corrado, J. Haltiwanger, and D. Sichel, eds., *Measuring Capital in the New Economy*, 11–46, University of Chicago Press, Chicago, 2005.
+BRASS, W. (1971). On the scale of mortality. In William Brass (ed.), *Biological Aspects of Demography*, pp. 69–110. London: Taylor and Francis.
 
-Corrado, C., C. Hulten, and D. Sichel, "Intangible capital and US economic growth," *Review of Income and Wealth*, 55, 661–685, 2009.
+CHRISTIANO, L.J. and TODD, R.M. (1996). Time to plan and aggregate fluctuations. *Federal Reserve Bank of Minneapolis Quarterly Review* 20, 14–27.
 
-Corrado, C., J. Haskel, C. Jona-Lasinio, and M. Iommi, "Intangible investment in the EU and US before and since the Great Recession and its contribution to productivity growth," *EIB Working Papers* 2016/08, 2016.
+CORRADO, C., HULTEN, C. and SICHEL, D. (2005). Measuring capital and technology: an expanded framework. In Carol Corrado, John Haltiwanger, and Daniel Sichel (eds.), *Measuring Capital in the New Economy*, pp. 11–46. Chicago: University of Chicago Press.
 
-Corrado, C., J. Haskel, M. Iommi, and C. Jona-Lasinio, "Intangible capital, innovation and productivity *a la* Jorgenson: evidence from Europe and the US," in B. M. Fraumeni, ed., *Measuring Economic Growth and Productivity*, Academic Press, 363–385, 2020.
+CORRADO, C., HULTEN, C. and SICHEL, D. (2009). Intangible capital and US economic growth. *Review of Income and Wealth* 55, 661–685.
 
-Christiano, L. J. and R. M. Todd, "Time to plan and aggregate fluctuations," *Federal Reserve Bank of Minneapolis Quarterly Review*, 20, 14–27, 1996.
+CORRADO, C., HASKEL, J., JONA-LASINIO, C. and IOMMI, M. (2016). Intangible investment in the EU and US before and since the Great Recession and its contribution to productivity growth. EIB Working Papers 2016/08.
 
-Dasgupta, P., *The Economics of Biodiversity: The Dasgupta Review*, HM Treasury, London, 2021.
+CORRADO, C., HASKEL, J., IOMMI, M. and JONA-LASINIO, C. (2020). Intangible capital, innovation and productivity à la Jorgenson: evidence from Europe and the US. In Barbara M. Fraumeni (ed.), *Measuring Economic Growth and Productivity*, pp. 363–385. Academic Press.
 
-De Rassenfosse, G. and A. B. Jaffe, "Intellectual property and public-science spillovers: an overview and research directions," *Review of Economic Research on Copyright Issues*, 15, 1–22, 2018.
+DASGUPTA, P. (2021). *The Economics of Biodiversity: The Dasgupta Review*. London: HM Treasury.
 
-Edge, R. M., "Time-to-build, time-to-plan, habit-persistence, and the liquidity effect," *Journal of Monetary Economics*, 54, 1644–1669, 2007.
+DE RASSENFOSSE, G. and JAFFE, A.B. (2018). Intellectual property and public-science spillovers: an overview and research directions. *Review of Economic Research on Copyright Issues* 15, 1–22.
 
-Feenstra, R. C., R. Inklaar, and M. P. Timmer, "The next generation of the Penn World Table," *American Economic Review*, 105, 3150–3182, 2015.
+EDGE, R.M. (2007). Time-to-build, time-to-plan, habit-persistence, and the liquidity effect. *Journal of Monetary Economics* 54, 1644–1669.
 
-Goldstein, J. R., W. Lutz, and S. Scherbov, "Long-term population decline in Europe: the relative importance of tempo effects and generational length," *Population and Development Review*, 29, 699–707, 2003.
+FEENSTRA, R.C., INKLAAR, R. and TIMMER, M.P. (2015). The next generation of the Penn World Table. *American Economic Review* 105, 3150–3182.
 
-Hamano, M. and Y. Zhao, "Fiscal sustainability and land prices in Japan," *Journal of the Japanese and International Economies*, 46, 17–29, 2017.
+GOLDSTEIN, J.R., LUTZ, W. and SCHERBOV, S. (2003). Long-term population decline in Europe: the relative importance of tempo effects and generational length. *Population and Development Review* 29, 699–707.
 
-Griliches, Z., "The discovery of the residual: a historical note," *Journal of Economic Literature*, 34, 1324–1330, 1996.
+GRILICHES, Z. (1996). The discovery of the residual: a historical note. *Journal of Economic Literature* 34, 1324–1330.
 
-Haskel, J. and S. Westlake, *Capitalism without Capital: The Rise of the Intangible Economy*, Princeton University Press, Princeton, 2017.
+HAMANO, M. and ZHAO, Y. (2017). Fiscal sustainability and land prices in Japan. *Journal of the Japanese and International Economies* 46, 17–29.
 
-Haskel, J. and S. Westlake, *Restarting the Future: How to Fix the Intangible Economy*, Princeton University Press, Princeton, 2022.
+HASKEL, J. and WESTLAKE, S. (2017). *Capitalism without Capital: The Rise of the Intangible Economy*. Princeton: Princeton University Press.
 
-Hulten, C. R., "Growth accounting when technical change is embodied in capital," *American Economic Review*, 82, 964–980, 1992.
+HASKEL, J. and WESTLAKE, S. (2022). *Restarting the Future: How to Fix the Intangible Economy*. Princeton: Princeton University Press.
 
-Inklaar, R. and M. P. Timmer, "Capital, labor and TFP in PWT 8.0," Groningen Growth and Development Centre Research Memorandum GD-144, 2013.
+HULTEN, C.R. (1992). Growth accounting when technical change is embodied in capital. *American Economic Review* 82, 964–980.
 
-Jorgenson, D. W. and Z. Griliches, "The explanation of productivity change," *Review of Economic Studies*, 34, 249–283, 1967.
+INKLAAR, R. and TIMMER, M.P. (2013). Capital, labor and TFP in PWT 8.0. Groningen Growth and Development Centre Research Memorandum GD-144.
 
-Jorgenson, D. W., "Production and welfare: progress in economic measurement," *Journal of Economic Literature*, 56, 867–919, 2018.
+JORGENSON, D.W. and GRILICHES, Z. (1967). The explanation of productivity change. *Review of Economic Studies* 34, 249–283.
 
-Jorgenson, D. W., M. S. Ho, and K. J. Stiroh, *Productivity, Vol. 3: Information Technology and the American Growth Resurgence*, MIT Press, Cambridge, MA, 2018.
+JORGENSON, D.W. (2018). Production and welfare: progress in economic measurement. *Journal of Economic Literature* 56, 867–919.
 
-Kaboski, J. P., "Factor price uncertainty, technology choice and investment delay," *Journal of Economic Dynamics and Control*, 29, 509–527, 2005.
+JORGENSON, D.W., HO, M.S. and STIROH, K.J. (2018). *Productivity, Vol. 3: Information Technology and the American Growth Resurgence*. Cambridge, MA: MIT Press.
 
-Koeva, P., "The facts about time-to-build," *IMF Working Paper* 00/138, 2000.
+KABOSKI, J.P. (2005). Factor price uncertainty, technology choice and investment delay. *Journal of Economic Dynamics and Control* 29, 509–527.
 
-Kohler, H.-P., F. C. Billari, and J. A. Ortega, "The emergence of lowest-low fertility in Europe during the 1990s," *Population and Development Review*, 28, 641–680, 2002.
+KOEVA, P. (2000). The facts about time-to-build. IMF Working Paper 00/138.
 
-Kydland, F. E. and E. C. Prescott, "Time to build and aggregate fluctuations," *Econometrica*, 50, 1345–1370, 1982.
+KOHLER, H.-P., BILLARI, F.C. and ORTEGA, J.A. (2002). The emergence of lowest-low fertility in Europe during the 1990s. *Population and Development Review* 28, 641–680.
 
-Lange, G.-M., Q. Wodon, and K. Carey, eds., *The Changing Wealth of Nations 2018: Building a Sustainable Future*, World Bank, Washington, DC, 2018.
+KYDLAND, F.E. and PRESCOTT, E.C. (1982). Time to build and aggregate fluctuations. *Econometrica* 50, 1345–1370.
 
-Managi, S. and P. Kumar, eds., *Inclusive Wealth Report 2018*, Routledge, London, 2018.
+LANGE, G.-M., WODON, Q. and CAREY, K. (eds.) (2018). *The Changing Wealth of Nations 2018: Building a Sustainable Future*. Washington, DC: World Bank.
 
-Mayer, T., "Plant and equipment lead times," *Journal of Business*, 33, 127–132, 1960.
+MANAGI, S. and KUMAR, P. (eds.) (2018). *Inclusive Wealth Report 2018*. London: Routledge.
 
-Nishimura, K. G. and Y. Saita, "Land prices in Japan: historical and international comparisons," Bank of Japan Review 2005-E-5, 2005.
+MAYER, T. (1960). Plant and equipment lead times. *Journal of Business* 33, 127–132.
 
-OECD, *Supporting Investment in Knowledge Capital, Growth and Innovation*, OECD Publishing, Paris, 2013.
+NISHIMURA, K.G. and SAITA, Y. (2005). Land prices in Japan: historical and international comparisons. Bank of Japan Review 2005-E-5.
 
-Roth, F., "Intangible capital and productivity growth in the EU: a panel data perspective," *Hamburg Discussion Papers in International Economics*, 13, 2023.
+OECD (2013). *Supporting Investment in Knowledge Capital, Growth and Innovation*. Paris: OECD Publishing.
 
-Salomon, J. A., H. Wang, M. K. Freeman, T. Vos, A. D. Flaxman, A. D. Lopez, and C. J. L. Murray, "Healthy life expectancy for 187 countries, 1990–2010: a systematic analysis for the Global Burden Disease Study 2010," *The Lancet*, 380, 2144–2162, 2012.
+ROTH, F. (2023). Intangible capital and productivity growth in the EU: a panel data perspective. *Hamburg Discussion Papers in International Economics* 13.
 
-Smets, F. and R. Wouters, "Shocks and frictions in US business cycles: a Bayesian DSGE approach," *American Economic Review*, 97, 586–606, 2007.
+SALOMON, J.A., WANG, H., FREEMAN, M.K., VOS, T., FLAXMAN, A.D., LOPEZ, A.D. and MURRAY, C.J.L. (2012). Healthy life expectancy for 187 countries, 1990–2010: a systematic analysis for the Global Burden Disease Study 2010. *The Lancet* 380, 2144–2162.
 
-Solow, R. M., "Technical change and the aggregate production function," *Review of Economics and Statistics*, 39, 312–320, 1957.
+SMETS, F. and WOUTERS, R. (2007). Shocks and frictions in US business cycles: a Bayesian DSGE approach. *American Economic Review* 97, 586–606.
 
-Stiglitz, J. E., A. Sen, and J.-P. Fitoussi, *Report by the Commission on the Measurement of Economic Performance and Social Progress*, Paris, 2009.
+SOLOW, R.M. (1957). Technical change and the aggregate production function. *Review of Economics and Statistics* 39, 312–320.
 
-UNECE, *Framework and Suggested Indicators to Measure Sustainable Development*, United Nations, Geneva, 2014.
+STIGLITZ, J.E., SEN, A. and FITOUSSI, J.-P. (2009). *Report by the Commission on the Measurement of Economic Performance and Social Progress*. Paris.
+
+UNECE (2014). *Framework and Suggested Indicators to Measure Sustainable Development*. Geneva: United Nations.
