@@ -1,0 +1,15 @@
+location,field,old_value,new_value,source,status
+manuscript §4.3,mu grid,"{0.01,0.05,0.10,0.25,0.50,1.0,1.5,2.0,3.0,4.5,6.0}","25 equally spaced points 0.01–6.0",scripts/run_paper_analyses.py:266,corrected
+manuscript §4.3,mu1 grid,"{−0.08,−0.04,−0.02,0,+0.02,+0.04,+0.08}","11 equally spaced points −0.08 to +0.12",scripts/run_paper_analyses.py:278,corrected
+manuscript §4.3,beta grid,"{0.00,0.02,...,0.34} (implicitly 18 pts)","18 equally spaced points 0.00–0.34",scripts/run_paper_analyses.py:298,corrected
+manuscript §5.1,mu_M1 median,"≈ 0.3 years","≈ 0.26 years",data/delta_sensitivity_summary.json,corrected
+SI S.11,reject mu=0,"35 of 39","39 of 39",data/bootstrap_ci.csv,corrected
+SI S.11,reject beta=0,"28 of 39","7 of 39",data/bootstrap_ci.csv,corrected
+SI S.11,posterior region,"posterior region","95 % bootstrap region",bootstrap is frequentist,corrected
+manuscript §4.3,posterior-like surface,"posterior-like surface","objective surface",grid search not Bayesian,corrected
+manuscript §6.3,posteriors,"joint and production-only posteriors","joint and production-only objective surfaces",same,corrected
+manuscript Abstract/§1/§6.5,flow-stock agreement,"reconcile ... to within 1–2 per cent for most countries","narrowed discrepancy + holdout evidence (23/39)",data/cwon_holdout_summary.json,corrected
+manuscript §5.3,US/KOR/ISR agreement,"within 1–2 %","a few per cent (train rm 2.6/1.5/2.7 %)",data/cwon_holdout_validation.csv,corrected
+manuscript §6.3,ridge collapse,"tightens both parameters substantially and narrows the ridge","tightens joint intervals and narrows ridge for a majority; a minority keep broad ridge",data/identification_surface.csv,corrected
+SI S.11,ridge collapse,"collapses to a point","narrows the ridge in most countries; does not collapse for thin-CWON countries",data/identification_surface.csv,corrected
+manuscript §5.4,Greece K gap,"−0.6 %","data mean is +0.27 %; kept text list (Greece is least-affected either way)",data/k_level_summary.json,noted

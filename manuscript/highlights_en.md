@@ -1,0 +1,5 @@
+- Investment gestation lags and omitted intangibles bias measured capital and TFP
+- Joint estimation of lag and intangible share reconciles flow and stock accounts
+- A parameter-free OECD asset-composition proxy validates the tempo correction
+- Median revisions: capital -4.3%, log TFP +1.7 pp, labour share +1.7 pp
+- Corrections concentrate where investment shifted to long-gestation assets
