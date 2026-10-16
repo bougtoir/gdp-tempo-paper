@@ -1,0 +1,53 @@
+{
+  "estimand": "median over countries of 2010-2019 country-mean gap/shift",
+  "n_countries": 35,
+  "bootstrap": {
+    "type": "whole-country percentile",
+    "B": 10000,
+    "seed": 20261016,
+    "resampling_unit": "country",
+    "shared_indices_across_stats": true
+  },
+  "scope": "cross-country sampling uncertainty only; excludes calibrated gestation-lag and depreciation uncertainty (bounded separately)",
+  "results": [
+    {
+      "statistic": "K_gap_pct",
+      "median": -4.289476986765996,
+      "country_boot_ci_lo": -4.99,
+      "country_boot_ci_hi": -3.91,
+      "q25": -5.29,
+      "q75": -3.77,
+      "min": -9.17,
+      "max": -0.58,
+      "loo_median_min": -4.31,
+      "loo_median_max": -4.25,
+      "MAD": 0.76
+    },
+    {
+      "statistic": "TFP_shift_pp",
+      "median": 1.735750071514437,
+      "country_boot_ci_lo": 1.5,
+      "country_boot_ci_hi": 2.08,
+      "q25": 1.43,
+      "q75": 2.68,
+      "min": 0.3,
+      "max": 4.64,
+      "loo_median_min": 1.72,
+      "loo_median_max": 1.76,
+      "MAD": 0.52
+    },
+    {
+      "statistic": "LS_shift_pp",
+      "median": 1.735750071514437,
+      "country_boot_ci_lo": 1.5,
+      "country_boot_ci_hi": 2.08,
+      "q25": 1.43,
+      "q75": 2.68,
+      "min": 0.3,
+      "max": 4.64,
+      "loo_median_min": 1.72,
+      "loo_median_max": 1.76,
+      "MAD": 0.52
+    }
+  ]
+}

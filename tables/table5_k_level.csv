@@ -1,4 +1,4 @@
-Country,ISO3,K gap (%),K gap 95% CI,TFP shift (pp),TFP shift 95% CI,Labour-share shift (pp),Labour-share shift 95% CI
+Country,ISO3,K gap (%),K gap range (2.5–97.5 pct),TFP shift (pp),TFP shift range (2.5–97.5 pct),Labour-share shift (pp),Labour-share shift range (2.5–97.5 pct)
 Ireland,IRL,-9.17,"[-14.05, -6.09]",-4.64,"[-7.26, -3.01]",4.64,"[3.01, 7.26]"
 Costa Rica,CRI,-7.25,"[-8.83, -5.43]",-3.19,"[-3.92, -2.36]",3.19,"[2.36, 3.92]"
 Republic of Korea,KOR,-7.07,"[-8.21, -6.22]",-3.1,"[-3.61, -2.71]",3.1,"[2.71, 3.61]"

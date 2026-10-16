@@ -126,8 +126,9 @@ def summarise_k_levels(kdf: pd.DataFrame) -> dict:
 def make_table_k_level(kdf: pd.DataFrame) -> pd.DataFrame:
     """Build the country-level K measurement consequences table.
 
-    Each reported value is the 2010-2019 country mean; the 95% CI is the
-    2.5th-97.5th percentile of annual values within that window.
+    Each reported value is the 2010-2019 country mean; the bracketed range is
+    the 2.5th-97.5th percentile of annual values within that window — a
+    temporal variability range, NOT a confidence interval.
     """
     recent = kdf[(kdf["year"] >= 2010) & (kdf["year"] <= 2019)]
 
@@ -144,22 +145,22 @@ def make_table_k_level(kdf: pd.DataFrame) -> pd.DataFrame:
             "Country": grp["country"].iloc[0],
             "ISO3": iso3,
             "K gap (%)": round(float(grp["K_pct_diff"].mean()), 2),
-            "K gap 95% CI": f"[{k_lo:.2f}, {k_hi:.2f}]",
+            "K gap range (2.5–97.5 pct)": f"[{k_lo:.2f}, {k_hi:.2f}]",
             "TFP shift (pp)": round(float(grp["TFP_shift_pct"].mean()), 2),
-            "TFP shift 95% CI": f"[{t_lo:.2f}, {t_hi:.2f}]",
+            "TFP shift range (2.5–97.5 pct)": f"[{t_lo:.2f}, {t_hi:.2f}]",
             "Labour-share shift (pp)": round(float(grp["ls_shift_pp"].mean()), 2),
-            "Labour-share shift 95% CI": f"[{l_lo:.2f}, {l_hi:.2f}]",
+            "Labour-share shift range (2.5–97.5 pct)": f"[{l_lo:.2f}, {l_hi:.2f}]",
         })
     table = pd.DataFrame(rows).sort_values("K gap (%)").reset_index(drop=True)
     median = {
         "Country": "Median",
         "ISO3": "",
         "K gap (%)": round(float(table["K gap (%)"].median()), 2),
-        "K gap 95% CI": "",
+        "K gap range (2.5–97.5 pct)": "",
         "TFP shift (pp)": round(float(table["TFP shift (pp)"].median()), 2),
-        "TFP shift 95% CI": "",
+        "TFP shift range (2.5–97.5 pct)": "",
         "Labour-share shift (pp)": round(float(table["Labour-share shift (pp)"].median()), 2),
-        "Labour-share shift 95% CI": "",
+        "Labour-share shift range (2.5–97.5 pct)": "",
     }
     return pd.concat([table, pd.DataFrame([median])], ignore_index=True)
 
