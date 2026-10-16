@@ -1,0 +1,22 @@
+FINAL DECISION — GDP+Tempo next submission (2026-10-16)
+
+1. SELECTED JOURNAL
+   Oxford Bulletin of Economics and Statistics (OBES), Wiley / Oxford Dept. of Economics.
+   Portal: https://onlinelibrary.wiley.com/journal/14680084
+   Backups: (1) Oxford Economic Papers (OUP, JIF 2.8, JIF-rank Q1); (2) Journal of Economic Studies (Emerald, JIF 2.4, JCR Q2).
+
+2. WHY OBES
+   Best scope/ecology fit in an 8-candidate comparison: OBES's own published line — dal Borgo/Goodridge/Haskel/Pesole (2013), Corrado/Haskel/Jona-Lasinio (2017), Guellec (2004) — is the literature this paper extends. No submission fee; standard non-OA route $0. Word limit ~10,000 (manuscript ~9,200). Candidates excluded: Applied Economics ($250 submission fee), Cambridge JE (heterodox scope), Economic Systems (institutions scope), EINT (fit + unverified fee), JAE (method-contribution bar). All 11 prior venues excluded incl. Economica (rejected twice; the attached handoff naming Economica was superseded).
+
+3. WHAT CHANGED
+   Scientific: nothing — analysis frozen per mandate. Editorial: added the two directly adjacent OBES papers to §2 and the bibliography (38 refs, all verified); abstract now states interval-not-point identification; one sentence added flagging the holdout oracle convention; new OBES-specific cover letter (first-person I, fit argument grounded in the journal's own publications); build docstring updated to Wiley/OBES.
+
+4. WHY THIS VERSION IS MORE SUITABLE
+   Framing now sits inside the journal's own research line rather than a generic measurement pitch; fit argument is verifiable from OBES's back catalogue; uncertainty reporting made explicit in the abstract — the two features a skeptical editor checks first.
+
+5. REMAINING RISKS
+   Eleven-rejection history (visible to no one but known); μ–δ confound cannot be eliminated with public data; Japan flow–stock gap only partially explained (land-price revaluation); Wilcoxon n.s. on the headline OOS comparison; OBES JIF modest (partial verification of latest value).
+
+6. FINAL DETERMINATION: **GO**
+
+   Gate results: scientific soundness PASS; novelty boundary PASS; citation ecology PASS; journal fit PASS; claim calibration PASS (CONDITIONAL: interval framing required — applied); statistical reporting PASS; publication costs PASS; formatting PASS; submission readiness GO.

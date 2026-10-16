@@ -1,0 +1,4 @@
+statistic,median,country_boot_ci_lo,country_boot_ci_hi,q25,q75,min,max,loo_median_min,loo_median_max,MAD
+K_gap_pct,-4.289476986765996,-4.99,-3.91,-5.29,-3.77,-9.17,-0.58,-4.31,-4.25,0.76
+TFP_shift_pp,1.735750071514437,1.5,2.08,1.43,2.68,0.3,4.64,1.72,1.76,0.52
+LS_shift_pp,1.735750071514437,1.5,2.08,1.43,2.68,0.3,4.64,1.72,1.76,0.52

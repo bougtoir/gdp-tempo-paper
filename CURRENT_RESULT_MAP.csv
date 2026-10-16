@@ -1,0 +1,19 @@
+claim,manuscript_value,unit,source
+"median K level gap, M2 vs M0",-4.29,%,data/k_level_summary.json
+K gap IQR,-5.29 to -3.77,%,data/k_level_summary.json
+median log-TFP shift,1.74,pp,data/k_level_summary.json
+median labour-share shift,1.736,pp,data/k_level_summary.json
+n countries K-level,35,,data/k_level_summary.json
+OOS MAPE M0,4.605,%,data/oos_summary.json
+OOS MAPE M1,4.058,%,data/oos_summary.json
+OOS MAPE M2,3.986,%,data/oos_summary.json
+OOS MAPE M4,4.606,%,data/oos_summary.json
+OOS MAPE Mobs,4.169,%,data/full_oos_summary.json
+Wilcoxon p (M2 vs M0),0.17558441741130082,,data/oos_summary.json
+Wilcoxon n,39,,data/oos_summary.json
+reject mu=0 at 5%,39,of 39,data/bootstrap_ci.csv
+reject beta=0 at 5%,7,of 39,data/bootstrap_ci.csv
+RPIM rho2 M0 median,0.8010696486571328,,data/rpim_summary.json
+RPIM rho2 M2 median,0.7990534920287652,,data/rpim_summary.json
+M_obs OOS median (35c),4.161,%,data/mobs_beta_summary.json
+beta_obs median,0.0,,data/mobs_beta_summary.json

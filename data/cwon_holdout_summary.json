@@ -1,0 +1,31 @@
+{
+  "M0": {
+    "n": 39,
+    "rm_train_median": 0.045789245765985996,
+    "rm_holdout_median": 0.050824080271977226,
+    "rm_holdout_q25": 0.020892401405999683,
+    "rm_holdout_q75": 0.12709189825108702,
+    "holdout_within_2pct": 0.20512820512820512,
+    "holdout_within_5pct": 0.4358974358974359
+  },
+  "prod_only": {
+    "n": 39,
+    "rm_train_median": 0.045620351101435426,
+    "rm_holdout_median": 0.04960080875489108,
+    "rm_holdout_q25": 0.019716606040699726,
+    "rm_holdout_q75": 0.12573194198471077,
+    "holdout_within_2pct": 0.2564102564102564,
+    "holdout_within_5pct": 0.46153846153846156
+  },
+  "joint": {
+    "n": 39,
+    "rm_train_median": 0.04559765323001081,
+    "rm_holdout_median": 0.04054174895697743,
+    "rm_holdout_q25": 0.01951404653717053,
+    "rm_holdout_q75": 0.1159580113087279,
+    "holdout_within_2pct": 0.2564102564102564,
+    "holdout_within_5pct": 0.5128205128205128
+  },
+  "joint_beats_prod_only": "23/39",
+  "joint_beats_M0": "27/39"
+}
